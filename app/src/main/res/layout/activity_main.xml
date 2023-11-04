@@ -22,12 +22,13 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username"
+        android:layout_marginStart="20dp"
+        android:textAlignment="textStart"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.116"
-        app:layout_constraintStart_toEndOf="@id/profilePic"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/profilePic"
         app:layout_constraintTop_toTopOf="@id/profilePic"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -87,15 +88,15 @@
         android:id="@+id/edit"
         android:layout_width="33dp"
         android:layout_height="21dp"
+        android:onClick="editProfile"
         android:text="Edit"
         android:textSize="16sp"
-        android:onClick="editProfile"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.771"
+        app:layout_constraintHorizontal_bias="0.837"
         app:layout_constraintStart_toEndOf="@+id/username"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.033" />
+        app:layout_constraintVertical_bias="0.038" />
 
     <TextView
         android:id="@+id/friendCount"

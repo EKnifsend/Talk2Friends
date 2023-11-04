@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class EditProfileActivity extends AppCompatActivity {
+    User user;
+
     private EditText usernameEditText, ageEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,30 +18,44 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra("message");
+        user = (User) intent.getParcelableExtra("user");
 
-        /*
-        TextView textView = (TextView) findViewById(R.id.resultMessage);
-        textView.setText(message);
-        *
-         */
+        // Make Profile information
+        usernameEditText = (EditText) findViewById(R.id.username);
+        String hintUsername = "Username: " + user.getName();
+        usernameEditText.setHint(hintUsername);
 
-        usernameEditText = findViewById(R.id.username);
-        ageEditText = findViewById(R.id.age);
+        ageEditText = (EditText) findViewById(R.id.age);
+        String hintAge = "Age: " + Integer.toString(user.getAge());
+        ageEditText.setHint(hintAge);
 
+        TextView association = (TextView) findViewById(R.id.association);
+        association.setText("w");
 
+        TextView email = (TextView) findViewById(R.id.email);
+        email.setText(user.getEmail());
     }
 
     public void cancel(View view){
         Intent intent = new Intent(this, MainActivity.class);
-        //intent.putExtra("message", message); maybe user id
-
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 
     public void submitChanges(View view) {
         String username = usernameEditText.getText().toString().trim();
-        //int age = ageEditText.
+        String ageInput = ageEditText.getText().toString().trim();
+
+        if (username.compareTo("") != 0) {
+            user.changeName(username);
+        }
+        if (ageInput.compareTo("") != 0) {
+            user.changeAge(Integer.parseInt(ageInput));
+        }
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
 
         /*
         mAuth.createUserWithEmailAndPassword(email, password)
