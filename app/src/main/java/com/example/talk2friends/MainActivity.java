@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     User user;
@@ -12,19 +13,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        /*
         Intent intent = getIntent();
         String message = intent.getStringExtra("com.example.sendmessage.MESSAGE");
         message = message + " : Fight On!";
+
+         */
         // Create user with ID
     }
 
     public void editProfile(View view){
+        /*
         EditText editView = (EditText) findViewById(R.id.editTextTextPersonName);
         String message = editView.getText().toString();
 
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         intent.putExtra("com.example.sendmessage.MESSAGE", message);
+
+        startActivity(intent)
+         */
+
+        Intent intent = new Intent(this, EditProfileActivity.class);
+        //intent.putExtra("message", message); maybe user id
 
         startActivity(intent);
     }
