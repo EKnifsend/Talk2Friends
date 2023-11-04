@@ -18,8 +18,11 @@ public class EditProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String message = intent.getStringExtra("message");
 
+        /*
         TextView textView = (TextView) findViewById(R.id.resultMessage);
         textView.setText(message);
+        *
+         */
 
         usernameEditText = findViewById(R.id.username);
         ageEditText = findViewById(R.id.age);
@@ -28,13 +31,17 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     public void cancel(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        //intent.putExtra("message", message); maybe user id
 
+        startActivity(intent);
     }
 
-    public void submitChange(View view) {
+    public void submitChanges(View view) {
         String username = usernameEditText.getText().toString().trim();
-        int age = ageEditText.
+        //int age = ageEditText.
 
+        /*
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -52,5 +59,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         Toast.makeText(getContext(), "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+         */
     }
 }
