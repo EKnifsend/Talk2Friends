@@ -3,10 +3,14 @@ package com.example.talk2friends;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.ArrayList;
 
 public class EditProfileActivity extends AppCompatActivity {
     User user;
@@ -39,6 +43,25 @@ public class EditProfileActivity extends AppCompatActivity {
 
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
+
+        // Set up list of interests
+        ArrayList<Interests> interests = new ArrayList<Interests>();
+
+        for (Interests interest : Interests.values()) {
+            interests.add(interest);
+        }
+
+        InterestAdapter interestAdapter = new InterestAdapter(this,interests);
+        ListView interestsView = (ListView) findViewById(R.id.interests);
+        interestsView.setAdapter(interestAdapter);
+
+        interestsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                //Call meeting page with meeting info from index i
+            }
+        });
     }
 
     public void cancel(View view){

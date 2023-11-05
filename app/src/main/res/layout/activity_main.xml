@@ -86,17 +86,18 @@
 
     <Button
         android:id="@+id/edit"
-        android:layout_width="33dp"
-        android:layout_height="21dp"
+        android:layout_width="62dp"
+        android:layout_height="33dp"
         android:onClick="editProfile"
         android:text="Edit"
-        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textSize="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.837"
+        app:layout_constraintHorizontal_bias="0.912"
         app:layout_constraintStart_toEndOf="@+id/username"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.038" />
+        app:layout_constraintVertical_bias="0.039" />
 
     <TextView
         android:id="@+id/friendCount"
@@ -144,9 +145,10 @@
     <Button
         android:id="@+id/create"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:onClick="createMeeting"
         android:text="Create"
+        android:textColor="#F4F4F4"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -155,14 +157,15 @@
         app:layout_constraintTop_toBottomOf="@+id/friendCount"
         app:layout_constraintVertical_bias="0.063" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:id="@+id/meetings"
-        android:layout_width="337dp"
-        android:layout_height="472dp"
+        android:layout_width="344dp"
+        android:layout_height="394dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create"
-        app:layout_constraintVertical_bias="0.923" />
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

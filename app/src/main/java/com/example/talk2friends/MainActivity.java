@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     User user;  // The current user
@@ -36,6 +40,33 @@ public class MainActivity extends AppCompatActivity {
 
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
+
+        // Set up list of meetings
+        ArrayList<MeetingInfo> meetings = new ArrayList<MeetingInfo>();
+
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 312", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 313", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 314", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 315", 1, "", "", "", 2, null));
+
+        MeetingAdapter meetingAdapter = new MeetingAdapter(this,meetings);
+        ListView meetingsView = (ListView) findViewById(R.id.meetings);
+        meetingsView.setAdapter(meetingAdapter);
+
+        meetingsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                //Call meeting page with meeting info from index i
+            }
+        });
     }
 
     /*
@@ -104,10 +135,6 @@ public class MainActivity extends AppCompatActivity {
      *  OnClick function for @+id/create button
      */
     public void createMeeting(View view){
-
-    }
-
-    public void selectMeeting(View view){
 
     }
 }
