@@ -30,7 +30,12 @@ public class EditProfileActivity extends AppCompatActivity {
         ageEditText.setHint(hintAge);
 
         TextView association = (TextView) findViewById(R.id.association);
-        association.setText("w");
+        if ((user.affiliation).compareTo("International Student") == 0) {
+            association.setText(getString(R.string.international));
+        }
+        else {
+            association.setText(getString(R.string.domestic));
+        }
 
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());

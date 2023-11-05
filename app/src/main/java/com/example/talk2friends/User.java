@@ -16,6 +16,16 @@ public abstract class User implements Parcelable {
     int age;
     String affiliation;
 
+    public static boolean addInterest(Interests interest, int userID) {
+        return true;
+        // add interest to database;
+    }
+
+    public static boolean removeInterest(Interests interest, int userID) {
+        // attempt to remove interest
+        return true;
+    }
+
     public User(int id, String email, String name, int age, String affiliation) {
         this.ID = id;
         this.email = email;

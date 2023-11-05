@@ -27,22 +27,15 @@ public class MainActivity extends AppCompatActivity {
         age.setText(Integer.toString(user.getAge()));
 
         TextView association = (TextView) findViewById(R.id.association);
-        association.setText("w");
+        if ((user.affiliation).compareTo("International Student") == 0) {
+            association.setText(getString(R.string.international));
+        }
+        else {
+            association.setText(getString(R.string.domestic));
+        }
 
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
-
-
-        /*
-        Intent intent = getIntent();
-        String message = intent.getStringExtra("com.example.sendmessage.MESSAGE");
-        message = message + " : Fight On!";
-
-        TextView bottomButton = (TextView) findViewById(R.id.bottomButton);
-        bottomButton.setOnClickListener(this::changeMode);
-        tv.setText(getString(R.string.flag));
-         */
-        // Create user with ID
     }
 
     /*
@@ -51,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
     private User buildUser(Intent intent) {
         if (intent.hasExtra("user")) { // User exists in app
             return ((User) intent.getParcelableExtra("user"));
+        }
+        else if (intent.hasExtra("userId")) {
+            // change
+            User makeUser = new NativeSpeaker(1, "mike@usc.edu", "mike", 12);
+
+            return makeUser;
         }
         else {
             User makeUser = new NativeSpeaker(1, "mike@usc.edu", "mike", 12);
