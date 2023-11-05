@@ -121,14 +121,22 @@ public class MainActivity extends AppCompatActivity {
      *  OnClick function for @+id/suggestFriends textView
      */
     public void suggestFriends(View view){
+        Intent intent = new Intent(MainActivity.this, SuggestFriendsActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("user", user);
 
+        startActivity(intent);
     }
 
     /*
      *  OnClick function for @+id/inviteFriends textView
      */
     public void invite(View view){
+        Intent intent = new Intent(MainActivity.this, InviteActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("user", user);
 
+        startActivity(intent);
     }
 
     /*

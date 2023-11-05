@@ -24,6 +24,15 @@
         <activity
             android:name=".EditProfileActivity">
         </activity>
+        <activity
+            android:name=".ProfileActivity">
+        </activity>
+        <activity
+            android:name=".SuggestFriendsActivity">
+        </activity>
+        <activity
+            android:name=".InviteActivity">
+        </activity>
     </application>
 
 </manifest>
