@@ -1,5 +1,6 @@
 package com.example.talk2friends;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.logging.StreamHandler;
 
 public class MeetingFragment extends Fragment {
 
@@ -34,14 +36,18 @@ public class MeetingFragment extends Fragment {
     private TextView creatorSign;
     private TextView creatorName;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private MeetingInfo meetingInfo;
+    private ArrayList<User> attendees = new ArrayList<User>();
+    private Activity activity;
 
     public MeetingFragment() {
         // Required empty public constructor
     }
 
-    public MeetingFragment(int userId, int meetingId){
+    public MeetingFragment(int userId, int meetingId, Activity activity){
         userId = userId;
         meetingId = meetingId;
+        activity = activity;
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,11 +68,29 @@ public class MeetingFragment extends Fragment {
                 if (!task.isSuccessful()) {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
-                    MeetingInfo mi = (MeetingInfo) task.getResult().getValue();
-                    
+                    meetingInfo = (MeetingInfo) task.getResult().getValue();
+                    ArrayList<Integer> userIds = meetingInfo.AttendeeIds;
+
+                    for(int i = 0; i < userIds.size(); ++i){
+                        myRef.child("users").child(String.valueOf(userIds.get(i))).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.e("firebase", "Error getting data", task.getException());
+                                } else {
+                                    User u = (User) task.getResult().getValue();
+                                    attendees.add(u);
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
+
+        UserListAdapter userListAdapter = new UserListAdapter(activity, attendees);
+        attendeeList.setAdapter(userListAdapter);
+
         return view;
     }
 }
