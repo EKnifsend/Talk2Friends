@@ -51,6 +51,14 @@ public class UserListAdapter extends ArrayAdapter<User> {
         nameTextView.setText(currentUser.getName());
 
         Button button = listItemView.findViewById(R.id.addOrRemoveFriend);
+        // TODO: check if friends already
+        if(true){
+            button.setText("Remove Friend");
+        }
+        else{
+            button.setText("Add Friend");
+        }
+
         return listItemView;
     }
 }
