@@ -48,6 +48,12 @@ public class LoginFragment extends Fragment {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
+        // Check if email and password fields are empty
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(getContext(), "Please fill out all fields", Toast.LENGTH_SHORT).show();
+            return; // Exit the method
+        }
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
