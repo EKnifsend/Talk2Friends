@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
         user = buildUser(intent);
 
+        System.out.println(user);
+
         // Make Profile information
         TextView username = (TextView) findViewById(R.id.username);
         username.setText(user.getName());
@@ -54,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
+
+        TextView friendCount = (TextView) findViewById(R.id.friendCount);
+        String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
+        friendCount.setText(friendCountText);
 
         // Set up list of meetings
         ArrayList<MeetingInfo> meetings = new ArrayList<MeetingInfo>();
@@ -95,42 +101,6 @@ public class MainActivity extends AppCompatActivity {
     private User buildUser(Intent intent) {
         if (intent.hasExtra("user")) { // User exists in app
             return ((User) intent.getParcelableExtra("user"));
-        }
-        else if (intent.hasExtra("userId")) {
-            // change
-            String userId = intent.getStringExtra("userId");
-            final String[] email = {"mike@usc.edu"};
-            final String[] name = new String[1];
-            final int[] age = new int[1];
-            final String[] affiliation = new String[1];
-
-            User makeUser;
-
-            mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    email[0] = dataSnapshot.child("email").getValue(String.class);
-                    name[0] = dataSnapshot.child("username").getValue(String.class);
-                    age[0] = dataSnapshot.child("age").getValue(int.class);
-                    affiliation[0] = dataSnapshot.child("userType").getValue(String.class);
-
-                    // Now you can use the 'email' variable here or in a callback function
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-            if (affiliation[0].compareTo("Native Speaker") == 0) {
-                makeUser = new NativeSpeaker(userId, email[0], name[0], age[0]);
-            }
-            else {
-                makeUser = new InternationalStudent(userId, email[0], name[0], age[0], "Spanish");
-            }
-
-            return makeUser;
         }
         else {
             User makeUser = new NativeSpeaker("1", "mike@usc.edu", "mike", 12);

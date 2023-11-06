@@ -2,7 +2,11 @@ package com.example.talk2friends;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginFragment extends Fragment {
 
@@ -18,6 +27,7 @@ public class LoginFragment extends Fragment {
     private Button loginButton;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -29,6 +39,7 @@ public class LoginFragment extends Fragment {
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
@@ -70,9 +81,42 @@ public class LoginFragment extends Fragment {
     }
 
     private void openMainActivity(String userId) {
+        /*
         Intent intent = new Intent(requireContext(), MainActivity.class);
         intent.putExtra("userId", userId);
         startActivity(intent);
         requireActivity().finish();
+
+         */
+
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = dataSnapshot.child("email").getValue(String.class);
+                String name = dataSnapshot.child("username").getValue(String.class);
+                int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
+                String affiliation = dataSnapshot.child("userType").getValue(String.class);
+
+                User makeUser;
+
+                if (affiliation.compareTo("Native Speaker") == 0) {
+                    makeUser = new NativeSpeaker(userId, email, name, age);
+                }
+                else {
+                    makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                }
+
+                Intent intent = new Intent(requireContext(), MainActivity.class);
+                intent.putExtra("user", makeUser);
+                startActivity(intent);
+                requireActivity().finish();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("firebase", "loadPost:onCancelled", error.toException());
+            }
+        });
+
     }
 }

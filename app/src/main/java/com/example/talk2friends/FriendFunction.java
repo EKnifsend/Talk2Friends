@@ -113,4 +113,9 @@ public class FriendFunction {
 
         return flag[0];
     }
+
+    public static int countFriends(String userId) {
+        //count friends
+        return 0;
+    }
 }

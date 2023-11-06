@@ -50,7 +50,7 @@ public class MeetingActivity extends Activity {
         userId = user.getID();
         if (intent.hasExtra("meetingInfo")) { // User exists in app
             meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
-            meetingId = meetingInfo.MeetingId;
+            meetingId = meetingInfo.meetingId;
         }
         joinOrLeaveButton = findViewById(R.id.joinOrLeave);
         meetingDescription = findViewById(R.id.meetingDescriptionTab);
@@ -76,7 +76,7 @@ public class MeetingActivity extends Activity {
                     if(meetingInfo == null){
                         return;
                     }
-                    ArrayList<String> userIds = meetingInfo.AttendeeIds;
+                    ArrayList<String> userIds = meetingInfo.attendeeIds;
 
                     for(int i = 0; i < userIds.size(); ++i){
                         if(userIds.get(i).compareTo(userId) == 0){
@@ -99,11 +99,11 @@ public class MeetingActivity extends Activity {
             }
         });
 
-        meetingName.setText(meetingInfo.Name);
-        meetingDescription.setText(meetingInfo.Location + '\n' + meetingInfo.Time + '\n' + meetingInfo.Description);
+        meetingName.setText(meetingInfo.name);
+        meetingDescription.setText(meetingInfo.location + '\n' + meetingInfo.time + '\n' + meetingInfo.description);
 
         // Set up creator name
-        myRef.child("users").child(String.valueOf(meetingInfo.CreatorId)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        myRef.child("users").child(String.valueOf(meetingInfo.creatorId)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
@@ -133,7 +133,7 @@ public class MeetingActivity extends Activity {
             joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    meetingInfo.AttendeeIds.remove(userId);
+                    meetingInfo.attendeeIds.remove(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
 
                     Map<String, Object> childUpdates = new HashMap<>();
@@ -148,7 +148,7 @@ public class MeetingActivity extends Activity {
             joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    meetingInfo.AttendeeIds.add(userId);
+                    meetingInfo.attendeeIds.add(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
 
                     Map<String, Object> childUpdates = new HashMap<>();

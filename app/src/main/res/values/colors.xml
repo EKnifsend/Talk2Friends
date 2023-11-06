@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="android_purple">#6305dc</color>
+    <color name="lilac">#b39bd8</color>
 </resources>

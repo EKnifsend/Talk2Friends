@@ -91,17 +91,17 @@ public class CreateMeetingActivity extends Activity {
                 if(flag)
                 {
                     MeetingInfo mi = new MeetingInfo();
-                    mi.CreatorId = userId;
-                    mi.MeetingId = 1; // TODO create a way to generate ids
-                    mi.Name = name;
-                    mi.Time = date + time;
-                    mi.Description = description;
-                    mi.Location = location;
+                    mi.creatorId = userId;
+                    mi.meetingId = 1; // TODO create a way to generate ids
+                    mi.name = name;
+                    mi.time = date + time;
+                    mi.description = description;
+                    mi.location = location;
 
                     DatabaseReference myRef = database.getReference();
-                    myRef.child("meetings").child(String.valueOf(userId)).setValue(mi);
+                    myRef.child("meetings").child("oogabooga").setValue(mi);
 
-                    openMainActivity(String.valueOf(userId));
+                    openMainActivity();
                 }
             }
         });
@@ -115,7 +115,7 @@ public class CreateMeetingActivity extends Activity {
 
         startActivity(intent);
     }
-    private void openMainActivity(String userId) {
+    private void openMainActivity() {
         Intent intent = new Intent(CreateMeetingActivity.this, MainActivity.class);
         intent.putExtra("user", user);
         startActivity(intent);
