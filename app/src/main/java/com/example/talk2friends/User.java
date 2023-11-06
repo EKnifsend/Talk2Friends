@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+
 public abstract class User implements Parcelable {
 
     public static final int CLASS_TYPE_INTERNATIONAL = 1;
@@ -15,6 +17,8 @@ public abstract class User implements Parcelable {
     String name;
     int age;
     String affiliation;
+
+    ArrayList<Interests> interests;
 
     public static boolean addInterest(Interests interest, int userID) {
         return true;
@@ -32,6 +36,7 @@ public abstract class User implements Parcelable {
         this.name = name;
         this.age = age;
         this.affiliation = affiliation;
+        this.interests = new ArrayList<Interests>();
     }
 
     protected User(Parcel in) {
@@ -40,6 +45,7 @@ public abstract class User implements Parcelable {
         name = in.readString();
         age = in.readInt();
         affiliation = in.readString();
+        interests = in.readArrayList(null);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -93,6 +99,34 @@ public abstract class User implements Parcelable {
         return age;
     }
 
+    public void setInterests(ArrayList<Interests> interests) {
+        this.interests = interests;
+    }
+
+    public boolean addInterests(Interests interest) {
+        if (interests.contains(interest)) {
+            return false;
+        }
+        else {
+            interests.add(interest);
+            return true;
+        }
+    }
+
+    public boolean removeInterests(Interests interest) {
+        if (interests.contains(interest)) {
+            interests.remove(interest);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public ArrayList<Interests> getInterests() {
+        return interests;
+    }
+
     public abstract String getAffiliation();
 
     @Override
@@ -107,5 +141,6 @@ public abstract class User implements Parcelable {
         parcel.writeString(name);
         parcel.writeInt(age);
         parcel.writeString(affiliation);
+        parcel.writeList(interests);
     }
 }

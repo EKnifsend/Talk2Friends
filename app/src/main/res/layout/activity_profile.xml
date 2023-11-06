@@ -110,11 +110,11 @@
         app:layout_constraintVertical_bias="0.887" />
 
     <Button
-        android:id="@+id/removeFriend"
+        android:id="@+id/addOrRemoveFriend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Remove"
-        android:onClick="submitChanges"
+        android:onClick="addOrRemoveFriend"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.688"
