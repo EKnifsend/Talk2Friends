@@ -54,12 +54,15 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
         Button button = listItemView.findViewById(R.id.addOrRemoveFriend);
 
+        /* LOOK AT
         if(FriendsFragment.AreFriends(MainActivity.user.ID, currentUser.ID)){
             button.setText("Remove Friend");
         }
         else{
             button.setText("Add Friend");
         }
+        *
+         */
 
         return listItemView;
     }

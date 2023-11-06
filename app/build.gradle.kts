@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.talk2friends"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.talk2friends"
@@ -34,7 +34,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-auth:22.2.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
