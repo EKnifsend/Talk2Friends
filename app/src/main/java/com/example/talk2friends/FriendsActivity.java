@@ -1,7 +1,5 @@
 package com.example.talk2friends;
 
-import static com.example.talk2friends.MainActivity.buildUser;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,7 +27,7 @@ import java.util.Map;
 
 public class FriendsActivity extends Activity {
     private User user;
-    private int userId;
+    private String userId;
     private ArrayList<User> friendsList = new ArrayList<User>();
     private TextView friendsView;
     private Button backButton;
@@ -42,7 +40,7 @@ public class FriendsActivity extends Activity {
         setContentView(R.layout.friends_tab);
 
         Intent intent = getIntent();
-        user = buildUser(intent);
+        user = (User) intent.getParcelableExtra("user");
         userId = user.ID;
 
         friendsView = findViewById(R.id.friendSign);
@@ -66,7 +64,7 @@ public class FriendsActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            AddFriends(userId, Integer.parseInt((String) idView.getText()));
+                            AddFriends(userId, (String) idView.getText());
                             button.setText("Remove Friend");
                         }
                     });
@@ -75,7 +73,7 @@ public class FriendsActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            RemoveFriends(userId, Integer.parseInt((String) idView.getText()));
+                            RemoveFriends(userId, (String) idView.getText());
                             button.setText("Add Friend");
                         }
                     });
@@ -96,7 +94,7 @@ public class FriendsActivity extends Activity {
                     if(friends == null){
                         return;
                     }
-                    ArrayList<Integer> userIds = friends.getFriends();
+                    ArrayList<String> userIds = friends.getFriends();
 
                     for(int i = 0; i < userIds.size(); ++i){
                         myRef.child("users").child(String.valueOf(userIds.get(i))).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -116,7 +114,7 @@ public class FriendsActivity extends Activity {
         });
     }
 
-    public static void AddFriends(int userA, int userB){
+    public static void AddFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -154,7 +152,7 @@ public class FriendsActivity extends Activity {
         });
     }
 
-    public static void RemoveFriends(int userA, int userB){
+    public static void RemoveFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -192,7 +190,7 @@ public class FriendsActivity extends Activity {
         });
     }
 
-    public static boolean AreFriends(int userA, int userB){
+    public static boolean AreFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         final boolean[] flag = {false};
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -202,7 +200,7 @@ public class FriendsActivity extends Activity {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     FriendsList friends = (FriendsList) task.getResult().getValue();
-                    ArrayList<Integer> userIds = friends.getFriends();
+                    ArrayList<String> userIds = friends.getFriends();
                     if(userIds.contains(userB)){
                         flag[0] = true;
                     }

@@ -1,7 +1,5 @@
 package com.example.talk2friends;
 
-import static com.example.talk2friends.MainActivity.buildUser;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +21,7 @@ public class CreateMeetingActivity extends Activity {
     private EditText meetingLocationEditText;
     private Button createButton;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private int userId;
+    private String userId;
 
     public CreateMeetingActivity() {
         // Required empty public constructor
@@ -39,7 +37,7 @@ public class CreateMeetingActivity extends Activity {
         setContentView(R.layout.create_meeting);
 
         Intent intent = getIntent();
-        user = buildUser(intent);
+        user = (User) intent.getParcelableExtra("user");
         userId = user.ID;
         meetingDateEditText = findViewById(R.id.meetingDate);
         meetingDescriptionEditText = findViewById(R.id.meetingDescription);

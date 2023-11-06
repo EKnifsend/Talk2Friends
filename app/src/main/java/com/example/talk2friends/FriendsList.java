@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class FriendsList {
     public FriendsList(){
     }
-    public ArrayList<Integer> getFriends() {
+    public ArrayList<String> getFriends() {
         return friends;
     }
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
-    public int userId;
-    public ArrayList<Integer> friends;
+    public String userId;
+    public ArrayList<String> friends;
 }

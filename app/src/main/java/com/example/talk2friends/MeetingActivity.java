@@ -1,7 +1,5 @@
 package com.example.talk2friends;
 
-import static com.example.talk2friends.MainActivity.buildUser;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +29,7 @@ public class MeetingActivity extends Activity {
     private Button addOrRemoveCreatorAsFriend;
     private ListView attendeeList;
     private int meetingId;
-    private int userId;
+    private String userId;
     private TextView attendeeSign;
     private TextView meetingName;
     private TextView meetingDescription;
@@ -48,8 +46,8 @@ public class MeetingActivity extends Activity {
         setContentView(R.layout.meeting_tab);
 
         Intent intent = getIntent();
-        user = buildUser(intent);
-        userId = user.ID;
+        user = (User) intent.getParcelableExtra("user");
+        userId = user.getID();
         if (intent.hasExtra("meetingInfo")) { // User exists in app
             meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
             meetingId = meetingInfo.MeetingId;
@@ -74,14 +72,14 @@ public class MeetingActivity extends Activity {
                 if (!task.isSuccessful()) {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
-                    meetingInfo = (MeetingInfo) task.getResult().getValue();
+                    meetingInfo = task.getResult().getValue(MeetingInfo.class);
                     if(meetingInfo == null){
                         return;
                     }
-                    ArrayList<Integer> userIds = meetingInfo.AttendeeIds;
+                    ArrayList<String> userIds = meetingInfo.AttendeeIds;
 
                     for(int i = 0; i < userIds.size(); ++i){
-                        if(userIds.get(i) == userId){
+                        if(userIds.get(i).compareTo(userId) == 0){
                             isAttendee = true;
                             continue;
                         }
@@ -181,7 +179,7 @@ public class MeetingActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            FriendsActivity.AddFriends(userId, Integer.parseInt((String) idView.getText()));
+                            FriendsActivity.AddFriends(userId, (String) idView.getText());
                             button.setText("Remove Friend");
                         }
                     });
@@ -190,7 +188,7 @@ public class MeetingActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            FriendsActivity.RemoveFriends(userId, Integer.parseInt((String) idView.getText()));
+                            FriendsActivity.RemoveFriends(userId, (String) idView.getText());
                             button.setText("Add Friend");
                         }
                     });

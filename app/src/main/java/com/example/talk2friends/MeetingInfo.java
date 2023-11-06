@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class MeetingInfo implements Parcelable {
     public MeetingInfo() {
     }
-    public MeetingInfo(String name, int meetingId, String description, String location, String time, int creatorId, ArrayList<Integer> attendees) {
+    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, ArrayList<String> attendees) {
         this.Name = name;
         this.MeetingId = meetingId;
         this.Description = description;
@@ -27,7 +27,8 @@ public class MeetingInfo implements Parcelable {
         Description = in.readString();
         Location = in.readString();
         Time = in.readString();
-        CreatorId = in.readInt();
+        CreatorId = in.readString();
+        AttendeeIds = in.readArrayList(null);
     }
 
     public static final Creator<MeetingInfo> CREATOR = new Creator<MeetingInfo>() {
@@ -57,10 +58,10 @@ public class MeetingInfo implements Parcelable {
     public String getTime() {
         return Time;
     }
-    public ArrayList<Integer> getAttendeeIds() {
+    public ArrayList<String> getAttendeeIds() {
         return AttendeeIds;
     }
-    public int getCreatorId() {
+    public String getCreatorId() {
         return CreatorId;
     }
     public String Name;
@@ -68,8 +69,8 @@ public class MeetingInfo implements Parcelable {
     public String Description;
     public String Location;
     public String Time;
-    public int CreatorId;
-    public ArrayList<Integer> AttendeeIds = new ArrayList<Integer>();
+    public String CreatorId;
+    public ArrayList<String> AttendeeIds = new ArrayList<String>();
     @Override
     public int describeContents() {
         return 0;
@@ -81,6 +82,7 @@ public class MeetingInfo implements Parcelable {
         parcel.writeString(Name);
         parcel.writeString(Time);
         parcel.writeString(Description);
-        parcel.writeInt(CreatorId);
+        parcel.writeString(CreatorId);
+        parcel.writeList(AttendeeIds);
     }
 }

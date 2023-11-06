@@ -3,7 +3,7 @@ import android.os.Parcel;
 
 public class InternationalStudent extends User {
     String nativeLanguage;
-    public InternationalStudent(int id, String email, String name, int age, String nativeLanguage) {
+    public InternationalStudent(String id, String email, String name, int age, String nativeLanguage) {
         super(id, email, name, age, "International Student");
 
         this.nativeLanguage = nativeLanguage;

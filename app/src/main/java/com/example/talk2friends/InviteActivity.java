@@ -33,6 +33,7 @@ public class InviteActivity extends AppCompatActivity  {
         // Set up results view
         results = (TextView) findViewById(R.id.results);
         results.setText("");
+
     }
 
     /*

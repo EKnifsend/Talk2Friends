@@ -7,7 +7,7 @@ import android.os.Parcel;
 import androidx.annotation.NonNull;
 
 public class NativeSpeaker extends User {
-    public NativeSpeaker(int id, String email, String name, int age) {
+    public NativeSpeaker(String id, String email, String name, int age) {
         super(id, email, name, age, "Native Speaker");
     }
 

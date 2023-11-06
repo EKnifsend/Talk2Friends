@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class FriendFunction {
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    public static void addFriends(int userA, int userB){
+    public static void addFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -54,7 +54,7 @@ public class FriendFunction {
         });
     }
 
-    public static void removeFriends(int userA, int userB){
+    public static void removeFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -92,7 +92,7 @@ public class FriendFunction {
         });
     }
 
-    public static boolean areFriends(int userA, int userB){
+    public static boolean areFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
         final boolean[] flag = {false};
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -102,7 +102,7 @@ public class FriendFunction {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     FriendsList friends = (FriendsList) task.getResult().getValue();
-                    ArrayList<Integer> userIds = friends.getFriends();
+                    ArrayList<String> userIds = friends.getFriends();
                     if(userIds.contains(userB)){
                         flag[0] = true;
                     }

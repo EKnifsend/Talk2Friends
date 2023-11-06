@@ -1,5 +1,6 @@
 package com.example.talk2friends;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,14 +9,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.ListView;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     User user;  // The current user
 
+    DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -44,17 +58,17 @@ public class MainActivity extends AppCompatActivity {
         // Set up list of meetings
         ArrayList<MeetingInfo> meetings = new ArrayList<MeetingInfo>();
 
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 312", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 313", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 314", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", 2, null));
-        meetings.add(new MeetingInfo("CSCI 315", 1, "", "", "", 2, null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 312", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 313", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 314", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
+        meetings.add(new MeetingInfo("CSCI 315", 1, "", "", "", "", null));
 
         MeetingAdapter meetingAdapter = new MeetingAdapter(this,meetings);
         ListView meetingsView = (ListView) findViewById(R.id.meetings);
@@ -78,19 +92,48 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Use Intent to set user correctly
      */
-    public static User buildUser(Intent intent) {
+    private User buildUser(Intent intent) {
         if (intent.hasExtra("user")) { // User exists in app
             return ((User) intent.getParcelableExtra("user"));
         }
         else if (intent.hasExtra("userId")) {
             // change
             String userId = intent.getStringExtra("userId");
-            User makeUser = new NativeSpeaker(1, "mike@usc.edu", "mike", 12);
+            final String[] email = {"mike@usc.edu"};
+            final String[] name = new String[1];
+            final int[] age = new int[1];
+            final String[] affiliation = new String[1];
+
+            User makeUser;
+
+            mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    email[0] = dataSnapshot.child("email").getValue(String.class);
+                    name[0] = dataSnapshot.child("username").getValue(String.class);
+                    age[0] = dataSnapshot.child("age").getValue(int.class);
+                    affiliation[0] = dataSnapshot.child("userType").getValue(String.class);
+
+                    // Now you can use the 'email' variable here or in a callback function
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+            if (affiliation[0].compareTo("Native Speaker") == 0) {
+                makeUser = new NativeSpeaker(userId, email[0], name[0], age[0]);
+            }
+            else {
+                makeUser = new InternationalStudent(userId, email[0], name[0], age[0], "Spanish");
+            }
 
             return makeUser;
         }
         else {
-            User makeUser = new NativeSpeaker(1, "mike@usc.edu", "mike", 12);
+            User makeUser = new NativeSpeaker("1", "mike@usc.edu", "mike", 12);
 
             return makeUser;
         }
@@ -123,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
     public void viewFriends(View view){
         Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
         //intent.putExtra("message", message); maybe user id
-        intent.putExtra("userId", user.ID);
+        intent.putExtra("user", user);
 
         startActivity(intent);
     }
@@ -156,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     public void createMeeting(View view){
         Intent intent = new Intent(MainActivity.this, CreateMeetingActivity.class);
         //intent.putExtra("message", message); maybe user id
-        intent.putExtra("userId", user.ID);
+        intent.putExtra("user", user);
 
         startActivity(intent);
     }
