@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (intent.hasExtra("userId")) {
             // change
+            String userId = intent.getStringExtra("userId");
             User makeUser = new NativeSpeaker(1, "mike@usc.edu", "mike", 12);
 
             return makeUser;

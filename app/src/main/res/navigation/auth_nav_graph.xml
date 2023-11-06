@@ -1,0 +1,29 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/auth_nav_graph"
+    app:startDestination="@id/signUpFragment"> <!-- Set the start destination to SignUpFragment -->
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.talk2friends.SignUpFragment"
+        android:label="SignUpFragment"
+        tools:layout="@layout/fragment_signup">
+        <!-- Your SignUpFragment configuration -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.talk2friends.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <!-- Your LoginFragment configuration -->
+    </fragment>
+
+    <action
+        android:id="@+id/action_signup_to_login"
+        app:destination="@id/loginFragment" />
+
+    <!-- Other fragments and actions specific to AuthActivity -->
+
+</navigation>
