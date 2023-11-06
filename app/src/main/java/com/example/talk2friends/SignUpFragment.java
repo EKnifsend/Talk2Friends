@@ -1,13 +1,15 @@
 package com.example.talk2friends;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -16,7 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 public class SignUpFragment extends Fragment {
 
     private EditText usernameEditText, emailEditText, passwordEditText;
-    private Button signUpButton, loginButton; // Add the loginButton
+    private Button signUpButton, loginButton;
+    private Spinner userTypeSpinner; // Add the Spinner
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -37,7 +40,18 @@ public class SignUpFragment extends Fragment {
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
         signUpButton = view.findViewById(R.id.signUpButton);
-        loginButton = view.findViewById(R.id.loginButton); // Initialize the loginButton
+        loginButton = view.findViewById(R.id.loginButton);
+        userTypeSpinner = view.findViewById(R.id.userTypeSpinner); // Initialize the Spinner
+
+        // Define an array of user types
+        String[] userTypes = {"Native Speaker", "International Student"};
+
+        // Create an ArrayAdapter to populate the Spinner with user types
+        ArrayAdapter<String> userTypeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, userTypes);
+        userTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Set the ArrayAdapter for the Spinner
+        userTypeSpinner.setAdapter(userTypeAdapter);
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,11 +60,9 @@ public class SignUpFragment extends Fragment {
             }
         });
 
-        // Add an OnClickListener for the loginButton
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to the LoginFragment
                 Navigation.findNavController(view).navigate(R.id.action_signup_to_login);
             }
         });
@@ -63,6 +75,9 @@ public class SignUpFragment extends Fragment {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
+        // Get the selected user type from the Spinner
+        String userType = userTypeSpinner.getSelectedItem().toString();
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -70,6 +85,7 @@ public class SignUpFragment extends Fragment {
                         String userId = mAuth.getCurrentUser().getUid();
                         DatabaseReference currentUserDB = mDatabase.child(userId);
                         currentUserDB.child("username").setValue(username);
+                        currentUserDB.child("userType").setValue(userType); // Save user type
 
                         // You can add more user data fields here as needed
 
