@@ -17,9 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpFragment extends Fragment {
 
-    private EditText usernameEditText, emailEditText, passwordEditText;
+    private EditText usernameEditText, emailEditText, passwordEditText, ageEditText; // Add the ageEditText
     private Button signUpButton, loginButton;
-    private Spinner userTypeSpinner; // Add the Spinner
+    private Spinner userTypeSpinner;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -41,7 +41,8 @@ public class SignUpFragment extends Fragment {
         passwordEditText = view.findViewById(R.id.passwordEditText);
         signUpButton = view.findViewById(R.id.signUpButton);
         loginButton = view.findViewById(R.id.loginButton);
-        userTypeSpinner = view.findViewById(R.id.userTypeSpinner); // Initialize the Spinner
+        userTypeSpinner = view.findViewById(R.id.userTypeSpinner);
+        ageEditText = view.findViewById(R.id.ageEditText); // Initialize the ageEditText
 
         // Define an array of user types
         String[] userTypes = {"Native Speaker", "International Student"};
@@ -74,8 +75,14 @@ public class SignUpFragment extends Fragment {
         String username = usernameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+        String age = ageEditText.getText().toString().trim();
 
-        // Get the selected user type from the Spinner
+        // Check if any of the fields are empty
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || age.isEmpty()) {
+            Toast.makeText(getContext(), "Please fill out all fields", Toast.LENGTH_SHORT).show();
+            return; // Exit the method
+        }
+
         String userType = userTypeSpinner.getSelectedItem().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -85,7 +92,9 @@ public class SignUpFragment extends Fragment {
                         String userId = mAuth.getCurrentUser().getUid();
                         DatabaseReference currentUserDB = mDatabase.child(userId);
                         currentUserDB.child("username").setValue(username);
-                        currentUserDB.child("userType").setValue(userType); // Save user type
+                        currentUserDB.child("userType").setValue(userType);
+                        currentUserDB.child("email").setValue(email);
+                        currentUserDB.child("age").setValue(age);
 
                         // You can add more user data fields here as needed
 
