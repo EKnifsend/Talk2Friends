@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     User user;  // The current user
 
     DatabaseReference mDatabase;
+    ArrayList<MeetingInfo> meetings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         user = buildUser(intent);
-
-        System.out.println(user);
+        meetings = new ArrayList<MeetingInfo>();
 
         // Make Profile information
         TextView username = (TextView) findViewById(R.id.username);
@@ -62,23 +62,28 @@ public class MainActivity extends AppCompatActivity {
         friendCount.setText(friendCountText);
 
         // Set up list of meetings
-        ArrayList<MeetingInfo> meetings = new ArrayList<MeetingInfo>();
-
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 312", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 313", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 314", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 310", 1, "", "", "", "", null));
-        meetings.add(new MeetingInfo("CSCI 315", 1, "", "", "", "", null));
-
         MeetingAdapter meetingAdapter = new MeetingAdapter(this,meetings);
         ListView meetingsView = (ListView) findViewById(R.id.meetings);
         meetingsView.setAdapter(meetingAdapter);
+
+        mDatabase.child("meetings").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                meetings.clear();
+                meetingAdapter.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    MeetingInfo meeting = dataSnapshot.getValue(MeetingInfo.class);
+                    meetings.add(meeting);
+                }
+                //meetingAdapter.addAll(meetings);
+                meetingAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         meetingsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -89,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("message", message); maybe user id
                 intent.putExtra("user", user);
                 intent.putExtra("meetingInfo", meetings.get(i));
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("user", user);
+                bundle.putParcelable("meetingInfo", meetings.get(i));
+                intent.putExtras(bundle);
 
                 startActivity(intent);
             }

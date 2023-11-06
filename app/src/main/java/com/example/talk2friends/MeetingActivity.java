@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MeetingActivity extends Activity {
+public class MeetingActivity extends AppCompatActivity {
     private User user;
     private Button joinOrLeaveButton;
     private Button addOrRemoveCreatorAsFriend;
@@ -46,12 +47,13 @@ public class MeetingActivity extends Activity {
         setContentView(R.layout.meeting_tab);
 
         Intent intent = getIntent();
-        user = (User) intent.getParcelableExtra("user");
-        userId = user.getID();
-        if (intent.hasExtra("meetingInfo")) { // User exists in app
-            meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
-            meetingId = meetingInfo.meetingId;
+        if (intent.getExtras() != null) {
+            user = (User) intent.getExtras().getParcelable("user");
+            meetingInfo = (MeetingInfo) intent.getExtras().getParcelable("meetingInfo");
         }
+        userId = user.getID();
+        meetingId = meetingInfo.meetingId;
+
         joinOrLeaveButton = findViewById(R.id.joinOrLeave);
         meetingDescription = findViewById(R.id.meetingDescriptionTab);
         attendeeSign = findViewById(R.id.attendees);

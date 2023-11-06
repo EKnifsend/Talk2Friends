@@ -99,7 +99,7 @@ public class CreateMeetingActivity extends Activity {
                     mi.location = location;
 
                     DatabaseReference myRef = database.getReference();
-                    myRef.child("meetings").child("oogabooga").setValue(mi);
+                    myRef.child("meetings").child(mi.name).setValue(mi);
 
                     openMainActivity();
                 }
