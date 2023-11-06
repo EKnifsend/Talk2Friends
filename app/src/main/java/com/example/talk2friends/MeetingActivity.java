@@ -50,7 +50,10 @@ public class MeetingActivity extends Activity {
         Intent intent = getIntent();
         user = buildUser(intent);
         userId = user.ID;
-
+        if (intent.hasExtra("meetingInfo")) { // User exists in app
+            meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
+            meetingId = meetingInfo.MeetingId;
+        }
         joinOrLeaveButton = findViewById(R.id.joinOrLeave);
         meetingDescription = findViewById(R.id.meetingDescriptionTab);
         attendeeSign = findViewById(R.id.attendees);
@@ -72,6 +75,9 @@ public class MeetingActivity extends Activity {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     meetingInfo = (MeetingInfo) task.getResult().getValue();
+                    if(meetingInfo == null){
+                        return;
+                    }
                     ArrayList<Integer> userIds = meetingInfo.AttendeeIds;
 
                     for(int i = 0; i < userIds.size(); ++i){
@@ -106,6 +112,9 @@ public class MeetingActivity extends Activity {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     User u = (User) task.getResult().getValue();
+                    if(u == null) {
+                        return;
+                    }
                     creatorName.setText(u.getName());
                 }
             }
@@ -188,5 +197,13 @@ public class MeetingActivity extends Activity {
                 }
             }
         });
+    }
+
+    public void back(View view){
+        Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("user", user);
+
+        startActivity(intent);
     }
 }

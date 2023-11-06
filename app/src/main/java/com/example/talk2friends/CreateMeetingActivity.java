@@ -110,10 +110,16 @@ public class CreateMeetingActivity extends Activity {
 
     }
 
+    public void back(View view){
+        Intent intent = new Intent(CreateMeetingActivity.this, MainActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("user", user);
 
+        startActivity(intent);
+    }
     private void openMainActivity(String userId) {
         Intent intent = new Intent(CreateMeetingActivity.this, MainActivity.class);
-        intent.putExtra("userId", userId);
+        intent.putExtra("user", user);
         startActivity(intent);
     }
 }

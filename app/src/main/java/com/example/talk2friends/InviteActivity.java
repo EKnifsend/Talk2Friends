@@ -45,6 +45,12 @@ public class InviteActivity extends AppCompatActivity  {
     }
 
     public void submitChanges(View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{String.valueOf(friendEmailEditText.getText())});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "test");
+        intent.putExtra(Intent.EXTRA_TEXT, "hello world");
+        intent.setType("message/rfc822");
+        startActivity(Intent.createChooser(intent, "Choose an Email client :")); 
         /*
         String username = usernameEditText.getText().toString().trim();
         String ageInput = ageEditText.getText().toString().trim();

@@ -65,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 //Call meeting page with meeting info from index i
+                Intent intent = new Intent(MainActivity.this, MeetingActivity.class);
+                //intent.putExtra("message", message); maybe user id
+                intent.putExtra("user", user);
+                intent.putExtra("meetingInfo", meetings.get(i));
+
+                startActivity(intent);
             }
         });
     }
