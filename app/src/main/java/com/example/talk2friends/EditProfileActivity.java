@@ -1,6 +1,7 @@
 package com.example.talk2friends;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,10 +11,19 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 public class EditProfileActivity extends AppCompatActivity {
     User user;
+
+    DatabaseReference mDatabase;
+    ArrayList<Interests> selectedInterests;
 
     private EditText usernameEditText, ageEditText;
     @Override
@@ -23,6 +33,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
+        selectedInterests = new ArrayList<>();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Make Profile information
         usernameEditText = (EditText) findViewById(R.id.username);
@@ -46,20 +59,49 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Set up list of interests
         ArrayList<Interests> interests = new ArrayList<Interests>();
+        InterestAdapter interestAdapter = new InterestAdapter(this,interests,selectedInterests);
+        ListView interestsView = (ListView) findViewById(R.id.interests);
+        interestsView.setAdapter(interestAdapter);
 
         for (Interests interest : Interests.values()) {
             interests.add(interest);
-        }
 
-        InterestAdapter interestAdapter = new InterestAdapter(this,interests);
-        ListView interestsView = (ListView) findViewById(R.id.interests);
-        interestsView.setAdapter(interestAdapter);
+            String interestId = user.getID() + interest.toString();
+            mDatabase.child("interests").child(interestId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // "interest1" does exists in the database
+                        selectedInterests.add(interest);
+                        interestAdapter.updateSeletected(selectedInterests);
+                        interestAdapter.notifyDataSetChanged();
+                    } else {
+                        // "interest1" doesn't not exist in the database
+                        //System.out.println("Entry " + interestId + "doesn't exist in the database.");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Handle database error
+                    System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
+                }
+            });
+        }
 
         interestsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Interests selectedInterest = interestAdapter.getValueAtIndex(i);
 
-                //Call meeting page with meeting info from index i
+                if (selectedInterests.contains(selectedInterest)) {
+                    view.setBackgroundColor(Color.WHITE);
+                    selectedInterests.remove(selectedInterest);
+                }
+                else {
+                    view.setBackgroundColor(getResources().getColor(R.color.lilac));
+                    selectedInterests.add(selectedInterest);
+                }
             }
         });
     }
@@ -76,9 +118,22 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (username.compareTo("") != 0) {
             user.changeName(username);
+            mDatabase.child("users").child(user.getID()).child("username").setValue(username);
         }
         if (ageInput.compareTo("") != 0) {
             user.changeAge(Integer.parseInt(ageInput));
+            mDatabase.child("users").child(user.getID()).child("age").setValue(ageInput);
+        }
+
+        //update interests
+        for (Interests interest : Interests.values()) {
+            if (selectedInterests.contains(interest)) {
+                System.out.println(interest);
+                Interests.addInterest(user.getID(), interest);
+            }
+            else {
+                Interests.removeInterest(user.getID(), interest);
+            }
         }
 
         Intent intent = new Intent(this, MainActivity.class);

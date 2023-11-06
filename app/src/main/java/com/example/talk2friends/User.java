@@ -5,16 +5,20 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+
 public abstract class User implements Parcelable {
 
     public static final int CLASS_TYPE_INTERNATIONAL = 1;
     public static final int CLASS_TYPE_NATIVE = 2;
 
-    final int ID;
+    final String ID;
     String email;
     String name;
     int age;
     String affiliation;
+
+    ArrayList<Interests> interests;
 
     public static boolean addInterest(Interests interest, int userID) {
         return true;
@@ -26,20 +30,22 @@ public abstract class User implements Parcelable {
         return true;
     }
 
-    public User(int id, String email, String name, int age, String affiliation) {
+    public User(String id, String email, String name, int age, String affiliation) {
         this.ID = id;
         this.email = email;
         this.name = name;
         this.age = age;
         this.affiliation = affiliation;
+        this.interests = new ArrayList<Interests>();
     }
 
     protected User(Parcel in) {
-        ID = in.readInt();
+        ID = in.readString();
         email = in.readString();
         name = in.readString();
         age = in.readInt();
         affiliation = in.readString();
+        interests = in.readArrayList(null);
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -77,7 +83,7 @@ public abstract class User implements Parcelable {
         this.age = age;
     }
 
-    public int getID() {
+    public String getID() {
         return ID;
     }
 
@@ -93,6 +99,34 @@ public abstract class User implements Parcelable {
         return age;
     }
 
+    public void setInterests(ArrayList<Interests> interests) {
+        this.interests = interests;
+    }
+
+    public boolean addInterests(Interests interest) {
+        if (interests.contains(interest)) {
+            return false;
+        }
+        else {
+            interests.add(interest);
+            return true;
+        }
+    }
+
+    public boolean removeInterests(Interests interest) {
+        if (interests.contains(interest)) {
+            interests.remove(interest);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public ArrayList<Interests> getInterests() {
+        return interests;
+    }
+
     public abstract String getAffiliation();
 
     @Override
@@ -102,10 +136,11 @@ public abstract class User implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeInt(ID);
+        parcel.writeString(ID);
         parcel.writeString(email);
         parcel.writeString(name);
         parcel.writeInt(age);
         parcel.writeString(affiliation);
+        parcel.writeList(interests);
     }
 }

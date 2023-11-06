@@ -16,6 +16,7 @@ import java.sql.Array;
 public class MeetingAdapter extends ArrayAdapter<MeetingInfo> {
     private static final String LOG_TAG = MeetingAdapter.class.getSimpleName();
 
+
     public MeetingAdapter(Activity context, ArrayList<MeetingInfo> meetings) {
         // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
         // the second argument is used when the ArrayAdapter is populating a single TextView.
