@@ -212,4 +212,12 @@ public class FriendsActivity extends Activity {
         });
         return flag[0];
     }
+
+    public void back(View view){
+        Intent intent = new Intent(FriendsActivity.this, MainActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("user", user);
+
+        startActivity(intent);
+    }
 }
