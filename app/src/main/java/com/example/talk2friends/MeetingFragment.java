@@ -1,5 +1,8 @@
 package com.example.talk2friends;
 
+import static com.example.talk2friends.FriendsFragment.AddFriends;
+import static com.example.talk2friends.FriendsFragment.RemoveFriends;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,8 +32,6 @@ import java.util.logging.StreamHandler;
 public class MeetingFragment extends Fragment {
 
     private Button joinOrLeaveButton;
-    private ArrayList<Button> addOrRemoveFriendsButton;
-    private ArrayList<TextView> attendeeNames;
     private Button addOrRemoveCreatorAsFriend;
     private ListView attendeeList;
     private int meetingId;
@@ -51,9 +52,9 @@ public class MeetingFragment extends Fragment {
     }
 
     public MeetingFragment(int userId, int meetingId, Activity activity){
-        userId = userId;
-        meetingId = meetingId;
-        activity = activity;
+        this.userId = userId;
+        this.meetingId = meetingId;
+        this.activity = activity;
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,7 +105,7 @@ public class MeetingFragment extends Fragment {
         });
 
         meetingName.setText(meetingInfo.Name);
-        meetingDescription.setText(meetingInfo.Description);
+        meetingDescription.setText(meetingInfo.Location + '\n' + meetingInfo.Time + '\n' + meetingInfo.Description);
 
         // Set up creator name
         myRef.child("users").child(String.valueOf(meetingInfo.CreatorId)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -175,23 +176,25 @@ public class MeetingFragment extends Fragment {
                 LinearLayout parentRow = (LinearLayout) view.getParent();
 
                 Button button = parentRow.findViewById(R.id.addOrRemoveFriend);
+                TextView idView = parentRow.findViewById(R.id.hiddenId);
                 if(button.getText().equals("Add Friend")){
-                    // TODO: Add friend
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            AddFriends(userId, Integer.parseInt((String) idView.getText()));
+                            button.setText("Remove Friend");
                         }
                     });
                 }
                 else{
-                    // TODO: Remove friend
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            RemoveFriends(userId, Integer.parseInt((String) idView.getText()));
+                            button.setText("Add Friend");
                         }
                     });
                 }
-
             }
         });
 

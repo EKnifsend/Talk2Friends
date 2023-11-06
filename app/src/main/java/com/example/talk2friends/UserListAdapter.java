@@ -49,10 +49,12 @@ public class UserListAdapter extends ArrayAdapter<User> {
 
         TextView nameTextView = (TextView) listItemView.findViewById(R.id.name);
         nameTextView.setText(currentUser.getName());
+        TextView idView = (TextView) listItemView.findViewById(R.id.hiddenId);
+        idView.setText(String.valueOf(currentUser.ID));
 
         Button button = listItemView.findViewById(R.id.addOrRemoveFriend);
-        // TODO: check if friends already
-        if(true){
+
+        if(FriendsFragment.AreFriends(MainActivity.user.ID, currentUser.ID)){
             button.setText("Remove Friend");
         }
         else{
