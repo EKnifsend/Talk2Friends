@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "stPrwGETRZdQSpizrnpup3BsRtx1");
     }
 
     /*

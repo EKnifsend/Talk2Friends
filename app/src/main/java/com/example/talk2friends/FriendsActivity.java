@@ -116,6 +116,13 @@ public class FriendsActivity extends Activity {
 
     public static void AddFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
+        String friendChildName;
+        if (userA.compareTo(userB) < 0) {
+            friendChildName = userA + userB;
+        }
+        else {
+            friendChildName = userB + userA;
+        }
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -154,6 +161,13 @@ public class FriendsActivity extends Activity {
 
     public static void RemoveFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
+        String friendChildName;
+        if (userA.compareTo(userB) < 0) {
+            friendChildName = userA + userB;
+        }
+        else {
+            friendChildName = userB + userA;
+        }
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
