@@ -1,21 +1,21 @@
 package com.example.talk2friends;
 
+import static com.example.talk2friends.MainActivity.buildUser;
+
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.firebase.Firebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CreateMeetingFragment extends Fragment {
-
+public class CreateMeetingActivity extends Activity {
+    private User user;
     private EditText meetingNameEditText;
     private EditText meetingDescriptionEditText;
     private EditText meetingTimeEditText;
@@ -25,24 +25,28 @@ public class CreateMeetingFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private int userId;
 
-    public CreateMeetingFragment() {
+    public CreateMeetingActivity() {
         // Required empty public constructor
     }
 
-    public CreateMeetingFragment(int userId){
+    public CreateMeetingActivity(int userId){
         userId = userId;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.create_meeting, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.create_meeting);
 
-        meetingDateEditText = view.findViewById(R.id.meetingDate);
-        meetingDescriptionEditText = view.findViewById(R.id.meetingDescription);
-        meetingLocationEditText = view.findViewById(R.id.meetingLocation);
-        meetingNameEditText = view.findViewById(R.id.meetingName);
-        meetingTimeEditText = view.findViewById(R.id.meetingTime);
-        createButton = view.findViewById(R.id.createMeeting);
+        Intent intent = getIntent();
+        user = buildUser(intent);
+        userId = user.ID;
+        meetingDateEditText = findViewById(R.id.meetingDate);
+        meetingDescriptionEditText = findViewById(R.id.meetingDescription);
+        meetingLocationEditText = findViewById(R.id.meetingLocation);
+        meetingNameEditText = findViewById(R.id.meetingName);
+        meetingTimeEditText = findViewById(R.id.meetingTime);
+        createButton = findViewById(R.id.createMeeting);
 
         createButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0)
@@ -103,15 +107,13 @@ public class CreateMeetingFragment extends Fragment {
                 }
             }
         });
-        return view;
 
     }
 
 
     private void openMainActivity(String userId) {
-        Intent intent = new Intent(requireContext(), MainActivity.class);
+        Intent intent = new Intent(CreateMeetingActivity.this, MainActivity.class);
         intent.putExtra("userId", userId);
         startActivity(intent);
-        requireActivity().finish();
     }
 }

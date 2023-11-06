@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Use Intent to set user correctly
      */
-    private User buildUser(Intent intent) {
+    public static User buildUser(Intent intent) {
         if (intent.hasExtra("user")) { // User exists in app
             return ((User) intent.getParcelableExtra("user"));
         }
@@ -115,7 +115,11 @@ public class MainActivity extends AppCompatActivity {
      * OnClick function for @+id/friendCount textView
      */
     public void viewFriends(View view){
+        Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("userId", user.ID);
 
+        startActivity(intent);
     }
 
     /*
@@ -144,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
      *  OnClick function for @+id/create button
      */
     public void createMeeting(View view){
+        Intent intent = new Intent(MainActivity.this, CreateMeetingActivity.class);
+        //intent.putExtra("message", message); maybe user id
+        intent.putExtra("userId", user.ID);
 
+        startActivity(intent);
     }
 }

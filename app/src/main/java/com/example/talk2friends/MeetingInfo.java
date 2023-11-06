@@ -36,12 +36,6 @@ public class MeetingInfo {
     public int getCreatorId() {
         return CreatorId;
     }
-    public void AddAttendee(int id){
-        AttendeeIds.add(id);
-    }
-    public void RemoveAttendee(int id){
-        AttendeeIds.remove(id);
-    }
     public String Name;
     public int MeetingId;
     public String Description;

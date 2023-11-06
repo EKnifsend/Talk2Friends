@@ -36,6 +36,15 @@
         <activity
             android:name=".InviteActivity">
         </activity>
+        <activity
+            android:name=".CreateMeetingActivity">
+        </activity>
+        <activity
+            android:name=".MeetingActivity">
+        </activity>
+        <activity
+            android:name=".FriendsActivity">
+        </activity>
     </application>
 
 </manifest>
