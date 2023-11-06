@@ -1,6 +1,9 @@
 package com.example.talk2friends;
 
+import static com.example.talk2friends.MainActivity.buildUser;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,37 +23,33 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FriendsFragment extends Fragment {
+public class FriendsActivity extends Activity {
+    private User user;
     private int userId;
-    private ArrayList<User> friendsList;
+    private ArrayList<User> friendsList = new ArrayList<User>();
     private TextView friendsView;
     private Button backButton;
     private ListView listView;
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private Activity activity;
     private FriendsList friends;
-
-
-    public FriendsFragment(){
-    }
-    public FriendsFragment(int id, Activity activity){
-        userId = id;
-        this.activity = activity;
-    }
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.friends_tab, container, false);
-        friendsView = view.findViewById(R.id.friendSign);
-        backButton = view.findViewById(R.id.backButton);
-        listView = view.findViewById(R.id.friendsList);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.friends_tab);
 
-        UserListAdapter userListAdapter = new UserListAdapter(activity,friendsList);
+        Intent intent = getIntent();
+        user = buildUser(intent);
+        userId = user.ID;
+
+        friendsView = findViewById(R.id.friendSign);
+        backButton = findViewById(R.id.backButton);
+        listView = findViewById(R.id.friendsList);
+
+        UserListAdapter userListAdapter = new UserListAdapter(this,friendsList);
         listView.setAdapter(userListAdapter);
         GetFriends();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,7 +82,6 @@ public class FriendsFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
 
     private void GetFriends(){
@@ -96,6 +93,9 @@ public class FriendsFragment extends Fragment {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     friends = (FriendsList) task.getResult().getValue();
+                    if(friends == null){
+                        return;
+                    }
                     ArrayList<Integer> userIds = friends.getFriends();
 
                     for(int i = 0; i < userIds.size(); ++i){
@@ -210,9 +210,6 @@ public class FriendsFragment extends Fragment {
                 }
             }
         });
-
         return flag[0];
     }
-
-
 }

@@ -1,14 +1,12 @@
 package com.example.talk2friends;
 
-import static com.example.talk2friends.FriendsFragment.AddFriends;
-import static com.example.talk2friends.FriendsFragment.RemoveFriends;
+import static com.example.talk2friends.MainActivity.buildUser;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -16,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,10 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.StreamHandler;
 
-public class MeetingFragment extends Fragment {
-
+public class MeetingActivity extends Activity {
+    private User user;
     private Button joinOrLeaveButton;
     private Button addOrRemoveCreatorAsFriend;
     private ListView attendeeList;
@@ -44,30 +40,25 @@ public class MeetingFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private MeetingInfo meetingInfo;
     private ArrayList<User> attendees = new ArrayList<User>();
-    private Activity activity;
     private boolean isAttendee = false;
 
-    public MeetingFragment() {
-        // Required empty public constructor
-    }
-
-    public MeetingFragment(int userId, int meetingId, Activity activity){
-        this.userId = userId;
-        this.meetingId = meetingId;
-        this.activity = activity;
-    }
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.meeting_tab, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.meeting_tab);
 
-        joinOrLeaveButton = view.findViewById(R.id.joinOrLeave);
-        meetingDescription = view.findViewById(R.id.meetingDescriptionTab);
-        attendeeSign = view.findViewById(R.id.attendees);
-        creatorSign = view.findViewById(R.id.creator);
-        creatorName = view.findViewById(R.id.creatorName);
-        meetingName = view.findViewById(R.id.meetingNameTab);
-        attendeeList = view.findViewById(R.id.attendeeList);
-        addOrRemoveCreatorAsFriend = view.findViewById(R.id.addFriend);
+        Intent intent = getIntent();
+        user = buildUser(intent);
+        userId = user.ID;
+
+        joinOrLeaveButton = findViewById(R.id.joinOrLeave);
+        meetingDescription = findViewById(R.id.meetingDescriptionTab);
+        attendeeSign = findViewById(R.id.attendees);
+        creatorSign = findViewById(R.id.creator);
+        creatorName = findViewById(R.id.creatorName);
+        meetingName = findViewById(R.id.meetingNameTab);
+        attendeeList = findViewById(R.id.attendeeList);
+        addOrRemoveCreatorAsFriend = findViewById(R.id.addFriend);
 
         attendeeSign.setText("Attendees");
         creatorSign.setText("Creator");
@@ -163,7 +154,7 @@ public class MeetingFragment extends Fragment {
 
 
         // set up list of attendees
-        UserListAdapter userListAdapter = new UserListAdapter(activity, attendees);
+        UserListAdapter userListAdapter = new UserListAdapter(this, attendees);
         attendeeList.setAdapter(userListAdapter);
         attendeeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -181,7 +172,7 @@ public class MeetingFragment extends Fragment {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            AddFriends(userId, Integer.parseInt((String) idView.getText()));
+                            FriendsActivity.AddFriends(userId, Integer.parseInt((String) idView.getText()));
                             button.setText("Remove Friend");
                         }
                     });
@@ -190,14 +181,12 @@ public class MeetingFragment extends Fragment {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            RemoveFriends(userId, Integer.parseInt((String) idView.getText()));
+                            FriendsActivity.RemoveFriends(userId, Integer.parseInt((String) idView.getText()));
                             button.setText("Add Friend");
                         }
                     });
                 }
             }
         });
-
-        return view;
     }
 }
