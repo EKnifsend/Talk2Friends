@@ -33,6 +33,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
+        //MeetingInfo meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
         selectedInterests = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();

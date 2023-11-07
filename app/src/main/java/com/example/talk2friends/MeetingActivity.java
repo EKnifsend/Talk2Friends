@@ -48,8 +48,8 @@ public class MeetingActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent.getExtras() != null) {
-            user = (User) intent.getExtras().getParcelable("user");
-            meetingInfo = (MeetingInfo) intent.getExtras().getParcelable("meetingInfo");
+            user = (User) intent.getParcelableExtra("user");
+            meetingInfo = (MeetingInfo) intent.getParcelableExtra("meetingInfo");
         }
         userId = user.getID();
         meetingId = meetingInfo.meetingId;
