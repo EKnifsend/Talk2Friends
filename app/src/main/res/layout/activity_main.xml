@@ -33,19 +33,6 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/age"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:text="21"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.437"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/association"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
         android:id="@+id/association"
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -53,9 +40,35 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.386"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/username"
         app:layout_constraintTop_toBottomOf="@+id/username"
+        app:layout_constraintVertical_bias="0.004" />
+
+    <TextView
+        android:id="@+id/interests"
+        android:layout_width="247dp"
+        android:layout_height="wrap_content"
+        android:text="Interests: "
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/association"
+        app:layout_constraintTop_toBottomOf="@+id/association"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/age"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="21"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.004"
+        app:layout_constraintStart_toEndOf="@+id/association"
+        app:layout_constraintTop_toTopOf="@+id/association"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -66,23 +79,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.584"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/age"
         app:layout_constraintTop_toTopOf="@+id/association"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/interests"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Interests: "
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.422"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/association"
-        app:layout_constraintVertical_bias="0.001" />
 
     <Button
         android:id="@+id/edit"

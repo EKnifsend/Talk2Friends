@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class MeetingInfo implements Parcelable {
     public MeetingInfo() {
     }
-    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, ArrayList<String> attendees) {
+    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, String attendees) {
         this.name = name;
         this.meetingId = meetingId;
         this.description = description;
@@ -20,28 +20,6 @@ public class MeetingInfo implements Parcelable {
         this.creatorId = creatorId;
         this.attendeeIds = attendees;
     }
-
-    protected MeetingInfo(Parcel in) {
-        name = in.readString();
-        meetingId = in.readInt();
-        description = in.readString();
-        location = in.readString();
-        time = in.readString();
-        creatorId = in.readString();
-        attendeeIds = in.readArrayList(null);
-    }
-
-    public static final Creator<MeetingInfo> CREATOR = new Creator<MeetingInfo>() {
-        @Override
-        public MeetingInfo createFromParcel(Parcel in) {
-            return new MeetingInfo(in);
-        }
-
-        @Override
-        public MeetingInfo[] newArray(int size) {
-            return new MeetingInfo[size];
-        }
-    };
 
     public String getName() {
         return name;
@@ -58,7 +36,7 @@ public class MeetingInfo implements Parcelable {
     public String getTime() {
         return time;
     }
-    public ArrayList<String> getAttendeeIds() {
+    public String getAttendeeIds() {
         return attendeeIds;
     }
     public String getCreatorId() {
@@ -70,19 +48,53 @@ public class MeetingInfo implements Parcelable {
     public String location;
     public String time;
     public String creatorId;
-    public ArrayList<String> attendeeIds = new ArrayList<String>();
+    public String attendeeIds;
+
     @Override
     public int describeContents() {
         return 0;
     }
+
     @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeInt(meetingId);
-        parcel.writeString(location);
-        parcel.writeString(name);
-        parcel.writeString(time);
-        parcel.writeString(description);
-        parcel.writeString(creatorId);
-        parcel.writeList(attendeeIds);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeInt(this.meetingId);
+        dest.writeString(this.description);
+        dest.writeString(this.location);
+        dest.writeString(this.time);
+        dest.writeString(this.creatorId);
+        dest.writeString(this.attendeeIds);
     }
+
+    public void readFromParcel(Parcel source) {
+        this.name = source.readString();
+        this.meetingId = source.readInt();
+        this.description = source.readString();
+        this.location = source.readString();
+        this.time = source.readString();
+        this.creatorId = source.readString();
+        this.attendeeIds = source.readString();
+    }
+
+    protected MeetingInfo(Parcel in) {
+        this.name = in.readString();
+        this.meetingId = in.readInt();
+        this.description = in.readString();
+        this.location = in.readString();
+        this.time = in.readString();
+        this.creatorId = in.readString();
+        this.attendeeIds = in.readString();
+    }
+
+    public static final Creator<MeetingInfo> CREATOR = new Creator<MeetingInfo>() {
+        @Override
+        public MeetingInfo createFromParcel(Parcel source) {
+            return new MeetingInfo(source);
+        }
+
+        @Override
+        public MeetingInfo[] newArray(int size) {
+            return new MeetingInfo[size];
+        }
+    };
 }

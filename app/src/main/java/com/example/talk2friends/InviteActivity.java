@@ -48,8 +48,8 @@ public class InviteActivity extends AppCompatActivity  {
     public void submitChanges(View view) {
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{String.valueOf(friendEmailEditText.getText())});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "test");
-        intent.putExtra(Intent.EXTRA_TEXT, "hello world");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Invitation to Talk2Friends");
+        intent.putExtra(Intent.EXTRA_TEXT, "Hi, this is an invitation to join Talk2Friends!");
         intent.setType("message/rfc822");
         startActivity(Intent.createChooser(intent, "Choose an Email client :")); 
         /*
