@@ -49,8 +49,8 @@ public class SuggestFriendsActivity extends AppCompatActivity {
 
         setInterests(new FirebaseCallback() {
             @Override
-            public void onCallback(ArrayList<Interests> interestsToDisplay) {
-
+            public void onCallback(ArrayList<Interests> userInterests) {
+                generateRecommendations(userInterests);
             }
         });
     }
@@ -84,7 +84,7 @@ public class SuggestFriendsActivity extends AppCompatActivity {
     }
 
     private interface FirebaseCallback {
-        void onCallback(ArrayList<Interests> interestsToDisplay);
+        void onCallback(ArrayList<Interests> userInterests);
     }
 
     /*
@@ -116,8 +116,10 @@ public class SuggestFriendsActivity extends AppCompatActivity {
                 List<Map.Entry<String, Integer>> sortRecomendations = sortHashMapByValue(potentialFriends);
 
                 userAdapter.clear();
-                for (int i = 0; i < NUMBER_OF_RECS; i++) {
-                     mDatabase.child("users").child(sortRecomendations.get(i).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                int i = 0;
+
+                while (i < NUMBER_OF_RECS && i < sortRecomendations.size()) {
+                    mDatabase.child("users").child(sortRecomendations.get(i).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
