@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +62,57 @@ public class MainActivity extends AppCompatActivity {
         String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
         friendCount.setText(friendCountText);
 
+        // Write user interests
+        setInterests();
+
         // Set up list of meetings
+        buildMeetings();
+
+        // FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "hjwlnl8b3BV5AZhbD1wA0HPdnSw2");
+    }
+
+    private void setInterests () {
+        ArrayList<Interests> interests = new ArrayList<>();
+
+        for (Interests interest : Interests.values()) {
+            String interestId = user.getID() + interest.toString();
+            mDatabase.child("interests").child(interestId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // "interest1" does exists in the database
+                        interests.add(dataSnapshot.child("interest").getValue(Interests.class));
+                        writeInterests(interests);
+                    } else {
+                        // "interest1" doesn't not exist in the database
+                        //System.out.println("Entry " + interestId + "doesn't exist in the database.");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Handle database error
+                    System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+    private void writeInterests (ArrayList<Interests> interests) {
+        String interestDisplay = "Interests: ";
+        for (Interests interest: interests) {
+            interestDisplay += interest.toStringPretty() + ", ";
+        }
+        interestDisplay = interestDisplay.substring(0, interestDisplay.length()-2);
+
+        TextView interestView = (TextView) findViewById(R.id.interests);
+        interestView.setText(interestDisplay);
+    }
+
+    /*
+     * Private helper to establish list of meetings
+     */
+    private void buildMeetings () {
         MeetingAdapter meetingAdapter = new MeetingAdapter(this,meetings);
         ListView meetingsView = (ListView) findViewById(R.id.meetings);
         meetingsView.setAdapter(meetingAdapter);
@@ -104,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "hjwlnl8b3BV5AZhbD1wA0HPdnSw2");
     }
 
     /*

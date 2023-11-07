@@ -11,14 +11,23 @@ import java.util.ArrayList;
 public class MeetingInfo implements Parcelable {
     public MeetingInfo() {
     }
-    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, ArrayList<String> attendees) {
+    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, ArrayList<String> attendeeIds) {
         this.name = name;
         this.meetingId = meetingId;
         this.description = description;
         this.location = location;
         this.time = time;
         this.creatorId = creatorId;
-        this.attendeeIds = attendees;
+        this.attendeeIds = attendeeIds;
+    }
+
+    public MeetingInfo(String name, int meetingId, String description, String location, String time, String creatorId, String attendeeIds) {
+        this.name = name;
+        this.meetingId = meetingId;
+        this.description = description;
+        this.location = location;
+        this.time = time;
+        this.creatorId = creatorId;
     }
 
     public String getName() {

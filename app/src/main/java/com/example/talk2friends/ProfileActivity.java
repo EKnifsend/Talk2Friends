@@ -76,7 +76,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set up list of interests
 
-        for (Interests interest : Interests.values()) {String interestId = user.getID() + interest.toString();
+        for (Interests interest : Interests.values()) {
+            String interestId = subject.getID() + interest.toString();
             mDatabase.child("interests").child(interestId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
