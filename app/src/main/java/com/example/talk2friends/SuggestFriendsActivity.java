@@ -159,6 +159,8 @@ public class SuggestFriendsActivity extends AppCompatActivity {
                 System.out.println(userAdapter.isEmpty());
 
                 while (i < NUMBER_OF_RECS && i < sortRecomendations.size()) {
+                    userAdapter.clear();
+                    System.out.println(userAdapter.isEmpty());
                     String userId = sortRecomendations.get(i).getKey();
                     mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -172,7 +174,6 @@ public class SuggestFriendsActivity extends AppCompatActivity {
 
                                 User rec = makeUser(userId, age, email, affiliation, username);
 
-                                userAdapter.clear();
                                 userAdapter.add(rec);
                                 userAdapter.notifyDataSetChanged();
                             } else {
