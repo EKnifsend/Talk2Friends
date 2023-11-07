@@ -102,7 +102,6 @@ public class MeetingActivity extends AppCompatActivity {
                 attendeeIds.clear();
                 userListAdapter.clear();
                 meetingInfo.attendeeIds = snapshot.child("attendeeIds").getValue(String.class);
-                Log.d("ATTENDEES", meetingInfo.attendeeIds);
                 attendeeIds.addAll(Arrays.asList(meetingInfo.attendeeIds.split(",")));
                 if (meetingInfo.attendeeIds.isEmpty()) {
                     attendeeIds.clear();
@@ -166,7 +165,7 @@ public class MeetingActivity extends AppCompatActivity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            FriendsActivity.AddFriends(userId, (String) idView.getText());
+                            FriendFunction.addFriends(userId, (String) idView.getText());
                             button.setText("Remove Friend");
                         }
                     });
