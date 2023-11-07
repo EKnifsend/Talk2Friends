@@ -122,9 +122,9 @@ public class MeetingActivity extends AppCompatActivity {
                             User makeUser;
 
                             if (affiliation.compareTo("Native Speaker") == 0) {
-                                makeUser = new NativeSpeaker(userId, email, name, age);
+                                makeUser = new NativeSpeaker(dataSnapshot.getValue().toString(), email, name, age);
                             } else {
-                                makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                                makeUser = new InternationalStudent(dataSnapshot.getValue().toString(), email, name, age, "Spanish");
                             }
                             attendees.add(makeUser);
                             userListAdapter.notifyDataSetChanged();
@@ -183,11 +183,24 @@ public class MeetingActivity extends AppCompatActivity {
         });
 
         // Set up button to add creator as friend
-        if (true) {
+        if (!FriendFunction.areFriends(userId, meetingInfo.creatorId)) {
             addOrRemoveCreatorAsFriend.setText("Add Friend");
         } else {
             addOrRemoveCreatorAsFriend.setText("Remove Friend");
         }
+        addOrRemoveCreatorAsFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!FriendFunction.areFriends(userId, meetingInfo.creatorId)) {
+                    addOrRemoveCreatorAsFriend.setText("Add Friend");
+                    FriendFunction.addFriends(userId, meetingInfo.creatorId);
+                } else {
+                    addOrRemoveCreatorAsFriend.setText("Remove Friend");
+                    FriendFunction.removeFriends(userId, meetingInfo.creatorId);
+                }
+            }
+        });
+
 
         // set up join or leave meeting button
         if (isAttendee){

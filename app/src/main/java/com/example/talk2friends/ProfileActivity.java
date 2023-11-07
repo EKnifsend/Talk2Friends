@@ -2,6 +2,7 @@ package com.example.talk2friends;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -38,6 +39,9 @@ public class ProfileActivity extends AppCompatActivity {
         subject = (User) intent.getParcelableExtra("subject");
 
         areFriends = FriendFunction.areFriends(user.getID(), subject.getID());
+        addOrRemoveFriend = (Button) findViewById(R.id.addOrRemoveFriend);
+        Log.d("SUBJECT", subject.getID());
+        setAddOrRemoveFriend();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
@@ -101,7 +105,7 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
 
-        addOrRemoveFriend = (Button) findViewById(R.id.addOrRemoveFriend);
+
     }
 
     private void setAddOrRemoveFriend() {
@@ -120,11 +124,11 @@ public class ProfileActivity extends AppCompatActivity {
     public void addOrRemoveFriend(View view) {
         if (!areFriends) {
             FriendFunction.addFriends(user.getID(), subject.getID());
-            areFriends = false;
+            areFriends = true;
         }
         else {
             FriendFunction.removeFriends(user.getID(), subject.getID());
-            areFriends = true;
+            areFriends = false;
         }
 
         setAddOrRemoveFriend();
