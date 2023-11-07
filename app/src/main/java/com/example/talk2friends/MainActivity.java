@@ -60,32 +60,6 @@ public class MainActivity extends AppCompatActivity {
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
 
-        mDatabase.child("friends").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    if(dataSnapshot.child("friend1Id").getValue().toString().equals(user.ID)){
-                        if(dataSnapshot.child("friend2Id").getValue() != null) {
-                            friends.add(dataSnapshot.child("friend2Id").getValue().toString());
-                        }
-                    }
-                    else if(dataSnapshot.child("friend2Id").getValue().toString().equals(user.ID)){
-                        friends.add(dataSnapshot.child("friend1Id").getValue().toString());
-                    }
-                }
-                TextView friendCount = (TextView) findViewById(R.id.friendCount);
-                String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
-                friendCount.setText(String.valueOf(friends.size()));
-                FriendFunction.setFriends(friends);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
 
 
         // Write user interests
@@ -100,6 +74,54 @@ public class MainActivity extends AppCompatActivity {
         buildMeetings();
 
         // FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "hjwlnl8b3BV5AZhbD1wA0HPdnSw2");
+        buildFriends(new FirebaseFriendCallback() {
+            @Override
+            public void onCallback(ArrayList<String> friendList) {
+                if (friendList.size() > 1) {
+
+                }
+                String friend1Id = friendList.get(0);
+                String friend2Id = friendList.get(1);
+
+                if (friend1Id != null && friend2Id != null) {
+                    if(friend1Id.equals(user.ID)){
+                        friends.add(friend2Id);
+                    }
+                    else if(friend2Id.equals(user.ID)){
+                        friends.add(friend1Id);
+                    }
+                    TextView friendCount = (TextView) findViewById(R.id.friendCount);
+                    String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
+                    friendCount.setText(String.valueOf(friends.size()));
+                    FriendFunction.setFriends(friends);
+                }
+            }
+        });
+    }
+
+    private interface FirebaseFriendCallback {
+        void onCallback(ArrayList<String> friends);
+    }
+
+    private void buildFriends (FirebaseFriendCallback firebaseCallback) {
+        ArrayList<Interests> interests = new ArrayList<>();
+
+        mDatabase.child("friends").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    ArrayList<String> friendList = new ArrayList<String>();
+                    friendList.add(dataSnapshot.child("friend1Id").getValue(String.class));
+                    friendList.add(dataSnapshot.child("friend1Id").getValue(String.class));
+                    firebaseCallback.onCallback(friendList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void setInterests (FirebaseCallback firebaseCallback) {
