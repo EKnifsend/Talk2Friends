@@ -121,9 +121,9 @@ public class MeetingActivity extends AppCompatActivity {
                             User makeUser;
 
                             if (affiliation.compareTo("Native Speaker") == 0) {
-                                makeUser = new NativeSpeaker(dataSnapshot.getValue().toString(), email, name, age);
+                                makeUser = new NativeSpeaker(dataSnapshot.getKey(), email, name, age);
                             } else {
-                                makeUser = new InternationalStudent(dataSnapshot.getValue().toString(), email, name, age, "Spanish");
+                                makeUser = new InternationalStudent(dataSnapshot.getKey(), email, name, age, "Spanish");
                             }
                             attendees.add(makeUser);
                             userListAdapter.notifyDataSetChanged();

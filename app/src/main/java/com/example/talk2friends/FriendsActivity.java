@@ -67,10 +67,10 @@ public class FriendsActivity extends Activity {
                     User makeUser;
 
                     if (affiliation.compareTo("Native Speaker") == 0) {
-                        makeUser = new NativeSpeaker(dataSnapshot.getValue().toString(), email, name, age);
+                        makeUser = new NativeSpeaker(dataSnapshot.getKey(), email, name, age);
                     }
                     else {
-                        makeUser = new InternationalStudent(dataSnapshot.getValue().toString(), email, name, age, "Spanish");
+                        makeUser = new InternationalStudent(dataSnapshot.getKey(), email, name, age, "Spanish");
                     }
                     friendsList.add(makeUser);
                     Log.d("HERE", String.valueOf(friendsList.size()));
