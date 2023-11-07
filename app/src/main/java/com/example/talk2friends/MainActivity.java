@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "stPrwGETRZdQSpizrnpup3BsRtx1");
+        // FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "hjwlnl8b3BV5AZhbD1wA0HPdnSw2");
     }
 
     /*
