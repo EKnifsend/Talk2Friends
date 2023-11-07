@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 TextView friendCount = (TextView) findViewById(R.id.friendCount);
-                String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
-                friendCount.setText(String.valueOf(friends.size()));
+                String friendCountText = String.valueOf(friends.size()) + "\nFriends";
+                friendCount.setText(friendCountText);
                 FriendFunction.setFriends(friends);
             }
 
