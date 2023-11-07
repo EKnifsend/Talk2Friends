@@ -212,7 +212,7 @@ public class MeetingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isAttendee){
-                    joinOrLeaveButton.setText("Leave");
+                    joinOrLeaveButton.setText("Join");
                     attendeeIds.remove(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
                     StringBuilder str = new StringBuilder();
@@ -229,7 +229,7 @@ public class MeetingActivity extends AppCompatActivity {
                     myRef.updateChildren(childUpdates);
                 }
                 else {
-                    joinOrLeaveButton.setText("Join");
+                    joinOrLeaveButton.setText("Leave");
                     attendeeIds.add(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
 

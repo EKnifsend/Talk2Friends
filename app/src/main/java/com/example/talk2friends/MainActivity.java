@@ -64,13 +64,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    if(dataSnapshot.child("friend1Id").getValue().toString().equals(user.ID)){
-                        if(dataSnapshot.child("friend2Id").getValue() != null) {
-                            friends.add(dataSnapshot.child("friend2Id").getValue().toString());
+                    if(dataSnapshot.child("friend1Id").getValue() != null){
+                        if(dataSnapshot.child("friend1Id").getValue().toString().equals(user.ID)){
+                            if(dataSnapshot.child("friend2Id").getValue() != null) {
+                                friends.add(dataSnapshot.child("friend2Id").getValue().toString());
+                            }
                         }
-                    }
-                    else if(dataSnapshot.child("friend2Id").getValue().toString().equals(user.ID)){
-                        friends.add(dataSnapshot.child("friend1Id").getValue().toString());
+                        if(dataSnapshot.child("friend2Id").getValue() != null){
+                            if(dataSnapshot.child("friend2Id").getValue().toString().equals(user.ID)){
+                                friends.add(dataSnapshot.child("friend1Id").getValue().toString());
+                            }
+                        }
                     }
                 }
                 TextView friendCount = (TextView) findViewById(R.id.friendCount);
