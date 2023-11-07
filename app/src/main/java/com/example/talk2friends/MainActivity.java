@@ -63,7 +63,12 @@ public class MainActivity extends AppCompatActivity {
         friendCount.setText(friendCountText);
 
         // Write user interests
-        setInterests();
+        setInterests(new FirebaseCallback() {
+            @Override
+            public void onCallback(ArrayList<Interests> interestsToDisplay) {
+                writeInterests(interestsToDisplay);
+            }
+        });
 
         // Set up list of meetings
         buildMeetings();
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         // FriendFunction.addFriends("UyiFGNfDm5WpCZoGB0y70951keX2", "hjwlnl8b3BV5AZhbD1wA0HPdnSw2");
     }
 
-    private void setInterests () {
+    private void setInterests (FirebaseCallback firebaseCallback) {
         ArrayList<Interests> interests = new ArrayList<>();
 
         for (Interests interest : Interests.values()) {
@@ -82,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     if (dataSnapshot.exists()) {
                         // "interest1" does exists in the database
                         interests.add(dataSnapshot.child("interest").getValue(Interests.class));
-                        writeInterests(interests);
+
+                        firebaseCallback.onCallback(interests);
                     } else {
                         // "interest1" doesn't not exist in the database
                         //System.out.println("Entry " + interestId + "doesn't exist in the database.");
@@ -98,10 +104,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private interface FirebaseCallback {
+        void onCallback(ArrayList<Interests> interestsToDisplay);
+    }
+
     private void writeInterests (ArrayList<Interests> interests) {
         String interestDisplay = "Interests: ";
         for (Interests interest: interests) {
-            interestDisplay += interest.toStringPretty() + ", ";
+            if (interest != null) {
+                interestDisplay += interest.toStringPretty() + ", ";
+            }
         }
         interestDisplay = interestDisplay.substring(0, interestDisplay.length()-2);
 
