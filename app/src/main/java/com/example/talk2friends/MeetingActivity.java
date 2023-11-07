@@ -17,8 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ public class MeetingActivity extends AppCompatActivity {
         if (intent.getExtras() != null) {
             user = (User) intent.getExtras().getParcelable("user");
             meetingInfo = (MeetingInfo) intent.getExtras().getParcelable("meetingInfo");
+            Log.d("meeting info", meetingInfo.name);
         }
         userId = user.getID();
         meetingId = meetingInfo.meetingId;
@@ -105,18 +108,14 @@ public class MeetingActivity extends AppCompatActivity {
         meetingDescription.setText(meetingInfo.location + '\n' + meetingInfo.time + '\n' + meetingInfo.description);
 
         // Set up creator name
-        myRef.child("users").child(String.valueOf(meetingInfo.creatorId)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        myRef.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
-                    User u = (User) task.getResult().getValue();
-                    if(u == null) {
-                        return;
-                    }
-                    creatorName.setText(u.getName());
-                }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                creatorName.setText(dataSnapshot.child("username").getValue(String.class));
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("firebase", "loadPost:onCancelled", error.toException());
             }
         });
 
