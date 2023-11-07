@@ -66,10 +66,10 @@ public class FriendsActivity extends Activity {
                     User makeUser;
 
                     if (affiliation.compareTo("Native Speaker") == 0) {
-                        makeUser = new NativeSpeaker(userId, email, name, age);
+                        makeUser = new NativeSpeaker(dataSnapshot.getValue().toString(), email, name, age);
                     }
                     else {
-                        makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                        makeUser = new InternationalStudent(dataSnapshot.getValue().toString(), email, name, age, "Spanish");
                     }
                     friendsList.add(makeUser);
                     userListAdapter.notifyDataSetChanged();
@@ -83,7 +83,12 @@ public class FriendsActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(FriendsActivity.this, ProfileActivity.class);
+                //intent.putExtra("message", message); maybe user id
+                intent.putExtra("user", user);
+                intent.putExtra("subject", friendsList.get(i));
 
+                startActivity(intent);
             }
             public void AddOrRemoveFriend(View view) {
                 LinearLayout parentRow = (LinearLayout) view.getParent();

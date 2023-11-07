@@ -56,6 +56,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         idView.setText(String.valueOf(currentUser.ID));
 
         Button button = listItemView.findViewById(R.id.addOrRemoveFriend);
+        button.setVisibility(View.INVISIBLE);
         if(currentUser.ID.equals(userid)){
             button.setVisibility(View.INVISIBLE);
         }
