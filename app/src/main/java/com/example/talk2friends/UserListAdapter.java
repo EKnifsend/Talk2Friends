@@ -19,13 +19,15 @@ import java.util.ArrayList;
 public class UserListAdapter extends ArrayAdapter<User> {
 
     private static final String LOG_TAG = UserListAdapter.class.getSimpleName();
+    private String userid;
 
-    public UserListAdapter(Activity context, ArrayList<User> users) {
+    public UserListAdapter(Activity context, ArrayList<User> users, String id) {
         // Here, we initialize the ArrayAdapter's internal storage for the context and the list.
         // the second argument is used when the ArrayAdapter is populating a single TextView.
         // Because this is a custom adapter for two TextViews and an ImageView, the adapter is not
         // going to use this second argument, so it can be any value. Here, we used 0.
         super(context, 0, users);
+        userid = id;
     }
 
     /**
@@ -54,6 +56,10 @@ public class UserListAdapter extends ArrayAdapter<User> {
         idView.setText(String.valueOf(currentUser.ID));
 
         Button button = listItemView.findViewById(R.id.addOrRemoveFriend);
+        if(currentUser.ID.equals(userid)){
+            button.setVisibility(View.INVISIBLE);
+        }
+
 
         /* LOOK AT
         if(FriendsFragment.AreFriends(MainActivity.user.ID, currentUser.ID)){

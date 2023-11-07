@@ -50,7 +50,7 @@ public class FriendsActivity extends Activity {
         backButton = findViewById(R.id.backButton);
         listView = findViewById(R.id.friendsList);
 
-        UserListAdapter userListAdapter = new UserListAdapter(this,friendsList);
+        UserListAdapter userListAdapter = new UserListAdapter(this,friendsList, userId);
         listView.setAdapter(userListAdapter);
         DatabaseReference myRef = database.getReference();
         ArrayList<String> fList = friends.getFriends();
@@ -58,6 +58,7 @@ public class FriendsActivity extends Activity {
             myRef.child("users").child(fList.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    userListAdapter.clear();
                     String email = dataSnapshot.child("email").getValue(String.class);
                     String name = dataSnapshot.child("username").getValue(String.class);
                     int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
@@ -71,6 +72,7 @@ public class FriendsActivity extends Activity {
                         makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
                     }
                     friendsList.add(makeUser);
+                    userListAdapter.notifyDataSetChanged();
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     User user;  // The current user
-
     DatabaseReference mDatabase;
     ArrayList<MeetingInfo> meetings;
     ArrayList<String> friends;
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 TextView friendCount = (TextView) findViewById(R.id.friendCount);
                 String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
                 friendCount.setText(String.valueOf(friends.size()));
+                FriendFunction.setFriends(friends);
             }
 
             @Override
