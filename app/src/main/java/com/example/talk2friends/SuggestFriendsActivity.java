@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,6 +55,37 @@ public class SuggestFriendsActivity extends AppCompatActivity {
                 generateRecommendations(userInterests);
             }
         });
+
+        recsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+            public void AddOrRemoveFriend(View view) {
+                LinearLayout parentRow = (LinearLayout) view.getParent();
+
+                Button button = parentRow.findViewById(R.id.addOrRemoveFriend);
+                TextView idView = parentRow.findViewById(R.id.hiddenId);
+                if(button.getText().equals("Add Friend")){
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            FriendFunction.addFriends(user.getID(), (String) idView.getText());
+                            button.setText("Remove Friend");
+                        }
+                    });
+                }
+                else{
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            FriendFunction.removeFriends(user.getID(), (String) idView.getText());
+                            button.setText("Add Friend");
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void setInterests (FirebaseCallback firebaseCallback) {
@@ -60,7 +93,7 @@ public class SuggestFriendsActivity extends AppCompatActivity {
 
         for (Interests interest : Interests.values()) {
             String interestId = user.getID() + interest.toString();
-            mDatabase.child("interests").child(interestId).addValueEventListener(new ValueEventListener() {
+            mDatabase.child("interests").child(interestId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -92,7 +125,8 @@ public class SuggestFriendsActivity extends AppCompatActivity {
      */
     private void generateRecommendations(ArrayList<Interests> userInterests) {
         ArrayList<User> recommendedUsers = new ArrayList<>();
-        mDatabase.child("interests").addValueEventListener(new ValueEventListener() {
+        System.out.println("Generate");
+        mDatabase.child("interests").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 HashMap<String, Integer> potentialFriends = new HashMap<String, Integer>();
@@ -118,13 +152,27 @@ public class SuggestFriendsActivity extends AppCompatActivity {
                 userAdapter.clear();
                 int i = 0;
 
+                System.out.println("map" + potentialFriends.size());
+                System.out.println("list" + sortRecomendations.size());
+
+                userAdapter.clear();
+                System.out.println(userAdapter.isEmpty());
+
                 while (i < NUMBER_OF_RECS && i < sortRecomendations.size()) {
-                    mDatabase.child("users").child(sortRecomendations.get(i).getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    String userId = sortRecomendations.get(i).getKey();
+                    mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 // "interest1" doesn't exists in the database
-                                User rec = dataSnapshot.getValue(User.class);
+                                int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
+                                String email = dataSnapshot.child("email").getValue(String.class);
+                                String affiliation = dataSnapshot.child("userType").getValue(String.class);
+                                String username = dataSnapshot.child("username").getValue(String.class);
+
+                                User rec = makeUser(userId, age, email, affiliation, username);
+
+                                userAdapter.clear();
                                 userAdapter.add(rec);
                                 userAdapter.notifyDataSetChanged();
                             } else {
@@ -139,6 +187,8 @@ public class SuggestFriendsActivity extends AppCompatActivity {
                             System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
                         }
                     });
+
+                    i++;
                 }
             }
 
@@ -157,6 +207,19 @@ public class SuggestFriendsActivity extends AppCompatActivity {
         entryList.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
         return entryList;
+    }
+
+    private User makeUser(String userId, int age, String email, String affiliation, String name) {
+        User makeUser;
+
+        if (affiliation.compareTo("Native Speaker") == 0) {
+            makeUser = new NativeSpeaker(userId, email, name, age);
+        }
+        else {
+            makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+        }
+
+        return makeUser;
     }
 
     /*
