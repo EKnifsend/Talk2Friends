@@ -118,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void exit(View view) {
-
+        this.finish();
     }
 
     public void addOrRemoveFriend(View view) {
