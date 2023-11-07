@@ -94,6 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("message", message); maybe user id
                 intent.putExtra("user", user);
                 intent.putExtra("meetingInfo", meetings.get(i));
+                Log.d("minfo", meetings.get(i).name);
+
+                //Bundle bundle = new Bundle();
+                //bundle.putParcelable("user", user);
+                //bundle.putParcelable("meetingInfo", meetings.get(i));
+                //intent.putExtras(bundle);
 
                 startActivity(intent);
             }
