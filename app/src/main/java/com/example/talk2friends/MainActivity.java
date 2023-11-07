@@ -150,7 +150,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, FriendsActivity.class);
         //intent.putExtra("message", message); maybe user id
         intent.putExtra("user", user);
-
+        FriendsList fList = new FriendsList(user.ID, friends);
+        intent.putExtra("friends", friends);
         startActivity(intent);
     }
 

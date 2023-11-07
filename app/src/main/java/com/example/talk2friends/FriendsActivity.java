@@ -41,6 +41,7 @@ public class FriendsActivity extends Activity {
 
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
+        friends = (FriendsList) intent.getParcelableExtra("friends");
         userId = user.ID;
 
         friendsView = findViewById(R.id.friendSign);
