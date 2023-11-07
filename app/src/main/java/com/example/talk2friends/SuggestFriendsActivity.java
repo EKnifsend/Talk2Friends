@@ -43,7 +43,7 @@ public class SuggestFriendsActivity extends AppCompatActivity {
         // Set up list of Friend recommendations
         ArrayList<User> friendRecs = new ArrayList<User>();
 
-        userAdapter  = new UserListAdapter(this,friendRecs);
+        userAdapter  = new UserListAdapter(this,friendRecs, user.getID());
         recsView = (ListView) findViewById(R.id.recommendations);
         recsView.setAdapter(userAdapter);
 

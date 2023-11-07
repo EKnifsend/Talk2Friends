@@ -27,9 +27,12 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference mDatabase;
     ArrayList<MeetingInfo> meetings;
 
+    ArrayList<String> friends;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        friends = new ArrayList<String>();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);

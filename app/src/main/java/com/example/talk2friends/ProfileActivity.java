@@ -118,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     public void addOrRemoveFriend(View view) {
-        if (areFriends) {
+        if (!areFriends) {
             FriendFunction.addFriends(user.getID(), subject.getID());
             areFriends = false;
         }

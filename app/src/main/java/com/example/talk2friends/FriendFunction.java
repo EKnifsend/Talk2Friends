@@ -118,8 +118,4 @@ public class FriendFunction {
         //count friends
         return 0;
     }
-
-    public ArrayList<User> getFriendsList() {
-        return friendsList;
-    }
 }
