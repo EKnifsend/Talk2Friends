@@ -64,7 +64,7 @@ public class MeetingActivity extends AppCompatActivity {
         creatorSign = findViewById(R.id.creator);
         creatorName = findViewById(R.id.creatorName);
         meetingName = findViewById(R.id.meetingNameTab);
-        attendeeList = findViewById(R.id.attendeeList);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
         addOrRemoveCreatorAsFriend = findViewById(R.id.addFriend);
 
         attendeeSign.setText("Attendees");
@@ -81,107 +81,70 @@ public class MeetingActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 creatorName.setText(dataSnapshot.child("username").getValue(String.class));
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.w("firebase", "loadPost:onCancelled", error.toException());
             }
         });
 
-        ArrayList<String> attendeeIds = new ArrayList<String>(Arrays.asList(meetingInfo.attendeeIds.split(",")));
-        if(meetingInfo.attendeeIds.isEmpty()){
-            attendeeIds.clear();
-        }
+
         // Get attendee list
-        for(int i = 0; i < attendeeIds.size(); ++i){
-            if(attendeeIds.get(i) == user.ID){
-                isAttendee = true;
-                continue;
-            }
-            myRef.child("users").child(attendeeIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    String email = dataSnapshot.child("email").getValue(String.class);
-                    String name = dataSnapshot.child("username").getValue(String.class);
-                    int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
-                    String affiliation = dataSnapshot.child("userType").getValue(String.class);
-
-                    User makeUser;
-
-                    if (affiliation.compareTo("Native Speaker") == 0) {
-                        makeUser = new NativeSpeaker(userId, email, name, age);
-                    }
-                    else {
-                        makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
-                    }
-                    attendees.add(makeUser);
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.w("firebase", "loadPost:onCancelled", error.toException());
-                }
-            });
-        }
-
-        // Set up button to add creator as friend
-        if(true){
-            addOrRemoveCreatorAsFriend.setText("Add Friend");
-        }
-        else{
-            addOrRemoveCreatorAsFriend.setText("Remove Friend");
-        }
-
-
-        // set up join or leave meeting button
-        if(isAttendee){
-            joinOrLeaveButton.setText("Leave");
-            joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    attendeeIds.remove(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-                    StringBuilder str = new StringBuilder();
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
-
-                    meetingInfo.attendeeIds = commaseparatedlist;
-                    Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/meetings/", meetingInfo);
-
-                    myRef.updateChildren(childUpdates);
-                }
-            });
-        }
-        else{
-            joinOrLeaveButton.setText("Join");
-            joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    attendeeIds.add(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
-
-                    meetingInfo.attendeeIds = commaseparatedlist;
-
-                    Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/meetings/", meetingInfo);
-
-                    myRef.updateChildren(childUpdates);
-                }
-            });
-        }
-
+        ArrayList<String> attendeeIds = new ArrayList<String>();
 
         // set up list of attendees
-        UserListAdapter userListAdapter = new UserListAdapter(this, attendees);
+        UserListAdapter userListAdapter = new UserListAdapter(this, attendees, userId);
         attendeeList.setAdapter(userListAdapter);
+        myRef.child("meetings/" + meetingInfo.name).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                attendees.clear();
+                attendeeIds.clear();
+                userListAdapter.clear();
+                meetingInfo.attendeeIds = snapshot.child("attendeeIds").getValue(String.class);
+                Log.d("ATTENDEES", meetingInfo.attendeeIds);
+                attendeeIds.addAll(Arrays.asList(meetingInfo.attendeeIds.split(",")));
+                if (meetingInfo.attendeeIds.isEmpty()) {
+                    attendeeIds.clear();
+                }
+                for (int i = 0; i < attendeeIds.size(); ++i) {
+                    if (attendeeIds.get(i) == user.ID) {
+                        isAttendee = true;
+                        continue;
+                    }
+                    myRef.child("users").child(attendeeIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String email = dataSnapshot.child("email").getValue(String.class);
+                            String name = dataSnapshot.child("username").getValue(String.class);
+                            int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
+                            String affiliation = dataSnapshot.child("userType").getValue(String.class);
+                            User makeUser;
+
+                            if (affiliation.compareTo("Native Speaker") == 0) {
+                                makeUser = new NativeSpeaker(userId, email, name, age);
+                            } else {
+                                makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                            }
+                            attendees.add(makeUser);
+                            userListAdapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.w("firebase", "loadPost:onCancelled", error.toException());
+                        }
+                    });
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         attendeeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -199,7 +162,7 @@ public class MeetingActivity extends AppCompatActivity {
 
                 Button button = parentRow.findViewById(R.id.addOrRemoveFriend);
                 TextView idView = parentRow.findViewById(R.id.hiddenId);
-                if(button.getText().equals("Add Friend")){
+                if (button.getText().equals("Add Friend")) {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -207,8 +170,7 @@ public class MeetingActivity extends AppCompatActivity {
                             button.setText("Remove Friend");
                         }
                     });
-                }
-                else{
+                } else {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -219,6 +181,65 @@ public class MeetingActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Set up button to add creator as friend
+        if (true) {
+            addOrRemoveCreatorAsFriend.setText("Add Friend");
+        } else {
+            addOrRemoveCreatorAsFriend.setText("Remove Friend");
+        }
+
+        // set up join or leave meeting button
+        if (isAttendee){
+            joinOrLeaveButton.setText("Leave");
+        }
+        else{
+            joinOrLeaveButton.setText("Join");
+        }
+        joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isAttendee){
+                    joinOrLeaveButton.setText("Leave");
+                    attendeeIds.remove(userId);
+                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
+                    StringBuilder str = new StringBuilder();
+                    String commaseparatedlist = attendeeIds.toString();
+                    commaseparatedlist
+                            = commaseparatedlist.replace("[", "")
+                            .replace("]", "")
+                            .replace(" ", "");
+
+                    meetingInfo.attendeeIds = commaseparatedlist;
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
+                    isAttendee = true;
+                    myRef.updateChildren(childUpdates);
+                }
+                else {
+                    joinOrLeaveButton.setText("Join");
+                    attendeeIds.add(userId);
+                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
+
+                    String commaseparatedlist = attendeeIds.toString();
+                    commaseparatedlist
+                            = commaseparatedlist.replace("[", "")
+                            .replace("]", "")
+                            .replace(" ", "");
+
+                    meetingInfo.attendeeIds = commaseparatedlist;
+
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
+                    isAttendee = false;
+                    myRef.updateChildren(childUpdates);
+                }
+            }
+        });
+
+
+
+
     }
 
     public void back(View view){

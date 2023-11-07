@@ -17,11 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FriendFunction {
-    private ArrayList<User> friendsList = new ArrayList<User>();
     private static FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-    public FriendFunction() {
-        friendsList = new ArrayList<User>();
+    private static ArrayList<String> friendsList;
+    public static void setFriends(ArrayList<String> f){
+        friendsList = f;
     }
     public static void addFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
@@ -43,6 +42,7 @@ public class FriendFunction {
                 if (!dataSnapshot.exists()) {
                     myRef.child("friends").child(friendChildName).child("friend1Id").setValue(friend1);
                     myRef.child("friends").child(friendChildName).child("friend2Id").setValue(friend2);
+                    friendsList.add(userB);
                 } else {
                     // "interest1" does not exist in the database
                     System.out.println("Entry 'interest1' does exist in the database.");
@@ -79,6 +79,7 @@ public class FriendFunction {
                 } else {
                     // "interest1" does not exist in the database
                     myRef.child("friends").child(friendChildName).removeValue();
+                    friendsList.remove(userB);
                 }
             }
 
@@ -92,7 +93,8 @@ public class FriendFunction {
 
     public static boolean areFriends(String userA, String userB){
         DatabaseReference myRef = database.getReference();
-        final boolean[] flag = {false};
+        return friendsList.contains(userB);
+       /* final boolean[] flag = {false};
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -102,14 +104,14 @@ public class FriendFunction {
                     FriendsList friends = (FriendsList) task.getResult().getValue();
                     ArrayList<String> userIds = friends.getFriends();
                     if(userIds.contains(userB)){
-                        flag[0] = true;
+                         flag[0] = true;
                     }
 
                 }
             }
         });
 
-        return flag[0];
+         return flag[0]; */
     }
 
     public static int countFriends(String userId) {
