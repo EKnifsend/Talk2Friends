@@ -28,12 +28,9 @@ public class MeetingInfo implements Parcelable {
         location = in.readString();
         time = in.readString();
         creatorId = in.readString();
-
+        attendeeIds = new ArrayList<String>();
         if (in.readByte() == 0x01) {
-            attendeeIds = new ArrayList<String>();
             in.readList(attendeeIds, String.class.getClassLoader());
-        } else {
-            attendeeIds = null;
         }
     }
 
