@@ -59,9 +59,30 @@ public class MainActivity extends AppCompatActivity {
         TextView email = (TextView) findViewById(R.id.email);
         email.setText(user.getEmail());
 
-        TextView friendCount = (TextView) findViewById(R.id.friendCount);
-        String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
-        friendCount.setText(friendCountText);
+        mDatabase.child("friends").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    if(dataSnapshot.child("friend1Id").getValue().toString().equals(user.ID)){
+                        friends.add(dataSnapshot.child("friend2Id").getValue().toString());
+                    }
+                    else if(dataSnapshot.child("friend2Id").getValue().toString().equals(user.ID)){
+                        friends.add(dataSnapshot.child("friend1Id").getValue().toString());
+                    }
+                }
+                TextView friendCount = (TextView) findViewById(R.id.friendCount);
+                String friendCountText = FriendFunction.countFriends(user.getID()) + "\nFriends";
+                friendCount.setText(String.valueOf(friends.size()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
 
         // Set up list of meetings
         MeetingAdapter meetingAdapter = new MeetingAdapter(this,meetings);
@@ -96,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 //intent.putExtra("message", message); maybe user id
                 intent.putExtra("user", user);
                 intent.putExtra("meetingInfo", meetings.get(i));
-                Log.d("minfo", meetings.get(i).name);
 
                 //Bundle bundle = new Bundle();
                 //bundle.putParcelable("user", user);
@@ -151,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         //intent.putExtra("message", message); maybe user id
         intent.putExtra("user", user);
         FriendsList fList = new FriendsList(user.ID, friends);
-        intent.putExtra("friends", friends);
+        intent.putExtra("friends", fList);
         startActivity(intent);
     }
 

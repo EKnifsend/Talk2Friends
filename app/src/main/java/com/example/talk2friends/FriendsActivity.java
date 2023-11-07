@@ -18,8 +18,10 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +52,32 @@ public class FriendsActivity extends Activity {
 
         UserListAdapter userListAdapter = new UserListAdapter(this,friendsList);
         listView.setAdapter(userListAdapter);
-        GetFriends();
+        DatabaseReference myRef = database.getReference();
+        ArrayList<String> fList = friends.getFriends();
+        for(int i = 0; i < fList.size(); ++i){
+            myRef.child("users").child(fList.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String email = dataSnapshot.child("email").getValue(String.class);
+                    String name = dataSnapshot.child("username").getValue(String.class);
+                    int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
+                    String affiliation = dataSnapshot.child("userType").getValue(String.class);
+                    User makeUser;
+
+                    if (affiliation.compareTo("Native Speaker") == 0) {
+                        makeUser = new NativeSpeaker(userId, email, name, age);
+                    }
+                    else {
+                        makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                    }
+                    friendsList.add(makeUser);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w("firebase", "loadPost:onCancelled", error.toException());
+                }
+            });
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -65,7 +92,7 @@ public class FriendsActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            AddFriends(userId, (String) idView.getText());
+                            FriendFunction.addFriends(userId, (String) idView.getText());
                             button.setText("Remove Friend");
                         }
                     });
@@ -74,7 +101,7 @@ public class FriendsActivity extends Activity {
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            RemoveFriends(userId, (String) idView.getText());
+                            FriendFunction.removeFriends(userId, (String) idView.getText());
                             button.setText("Add Friend");
                         }
                     });
