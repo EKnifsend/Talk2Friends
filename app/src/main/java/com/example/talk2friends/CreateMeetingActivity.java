@@ -12,6 +12,8 @@ import android.widget.EditText;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class CreateMeetingActivity extends Activity {
     private User user;
     private EditText meetingNameEditText;
@@ -97,6 +99,7 @@ public class CreateMeetingActivity extends Activity {
                     mi.time = date + time;
                     mi.description = description;
                     mi.location = location;
+                    mi.attendeeIds = new String();
 
                     DatabaseReference myRef = database.getReference();
                     myRef.child("meetings").child(mi.name).setValue(mi);

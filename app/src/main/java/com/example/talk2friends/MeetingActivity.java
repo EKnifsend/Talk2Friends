@@ -3,6 +3,7 @@ package com.example.talk2friends;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import java.util.*;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -69,46 +70,13 @@ public class MeetingActivity extends AppCompatActivity {
         attendeeSign.setText("Attendees");
         creatorSign.setText("Creator");
 
-        // retrieve meeting info from database
         DatabaseReference myRef = database.getReference();
-        myRef.child("meetings").child(String.valueOf(meetingId)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
-                } else {
-                    meetingInfo = task.getResult().getValue(MeetingInfo.class);
-                    if(meetingInfo == null){
-                        return;
-                    }
-                    ArrayList<String> userIds = meetingInfo.attendeeIds;
-
-                    for(int i = 0; i < userIds.size(); ++i){
-                        if(userIds.get(i).compareTo(userId) == 0){
-                            isAttendee = true;
-                            continue;
-                        }
-                        myRef.child("users").child(String.valueOf(userIds.get(i))).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                if (!task.isSuccessful()) {
-                                    Log.e("firebase", "Error getting data", task.getException());
-                                } else {
-                                    User u = (User) task.getResult().getValue();
-                                    attendees.add(u);
-                                }
-                            }
-                        });
-                    }
-                }
-            }
-        });
 
         meetingName.setText(meetingInfo.name);
         meetingDescription.setText(meetingInfo.location + '\n' + meetingInfo.time + '\n' + meetingInfo.description);
 
         // Set up creator name
-        myRef.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.child("users").child(meetingInfo.creatorId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 creatorName.setText(dataSnapshot.child("username").getValue(String.class));
@@ -118,6 +86,41 @@ public class MeetingActivity extends AppCompatActivity {
                 Log.w("firebase", "loadPost:onCancelled", error.toException());
             }
         });
+
+        ArrayList<String> attendeeIds = new ArrayList<String>(Arrays.asList(meetingInfo.attendeeIds.split(",")));
+        if(meetingInfo.attendeeIds.isEmpty()){
+            attendeeIds.clear();
+        }
+        // Get attendee list
+        for(int i = 0; i < attendeeIds.size(); ++i){
+            if(attendeeIds.get(i) == user.ID){
+                isAttendee = true;
+                continue;
+            }
+            myRef.child("users").child(attendeeIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String email = dataSnapshot.child("email").getValue(String.class);
+                    String name = dataSnapshot.child("username").getValue(String.class);
+                    int age = Integer.parseInt(dataSnapshot.child("age").getValue(String.class));
+                    String affiliation = dataSnapshot.child("userType").getValue(String.class);
+
+                    User makeUser;
+
+                    if (affiliation.compareTo("Native Speaker") == 0) {
+                        makeUser = new NativeSpeaker(userId, email, name, age);
+                    }
+                    else {
+                        makeUser = new InternationalStudent(userId, email, name, age, "Spanish");
+                    }
+                    attendees.add(makeUser);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w("firebase", "loadPost:onCancelled", error.toException());
+                }
+            });
+        }
 
         // Set up button to add creator as friend
         if(true){
@@ -134,11 +137,18 @@ public class MeetingActivity extends AppCompatActivity {
             joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    meetingInfo.attendeeIds.remove(userId);
+                    attendeeIds.remove(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
+                    StringBuilder str = new StringBuilder();
+                    String commaseparatedlist = attendeeIds.toString();
+                    commaseparatedlist
+                            = commaseparatedlist.replace("[", "")
+                            .replace("]", "")
+                            .replace(" ", "");
 
+                    meetingInfo.attendeeIds = commaseparatedlist;
                     Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/meetings/" + String.valueOf(meetingId)+ key, meetingInfo);
+                    childUpdates.put("/meetings/", meetingInfo);
 
                     myRef.updateChildren(childUpdates);
                 }
@@ -149,11 +159,19 @@ public class MeetingActivity extends AppCompatActivity {
             joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    meetingInfo.attendeeIds.add(userId);
+                    attendeeIds.add(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
 
+                    String commaseparatedlist = attendeeIds.toString();
+                    commaseparatedlist
+                            = commaseparatedlist.replace("[", "")
+                            .replace("]", "")
+                            .replace(" ", "");
+
+                    meetingInfo.attendeeIds = commaseparatedlist;
+
                     Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/meetings/" + String.valueOf(meetingId)+ key, meetingInfo);
+                    childUpdates.put("/meetings/", meetingInfo);
 
                     myRef.updateChildren(childUpdates);
                 }
@@ -167,7 +185,12 @@ public class MeetingActivity extends AppCompatActivity {
         attendeeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MeetingActivity.this, ProfileActivity.class);
+                //intent.putExtra("message", message); maybe user id
+                intent.putExtra("user", user);
+                intent.putExtra("subject", attendees.get(i));
 
+                startActivity(intent);
             }
 
             public void AddOrRemoveFriend(View view) {
