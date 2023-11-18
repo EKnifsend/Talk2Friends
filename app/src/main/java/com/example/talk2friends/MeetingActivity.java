@@ -39,6 +39,7 @@ public class MeetingActivity extends AppCompatActivity {
     private TextView meetingDescription;
     private TextView creatorSign;
     private TextView creatorName;
+    private Button deleteButton;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private MeetingInfo meetingInfo;
     private ArrayList<User> attendees = new ArrayList<User>();
@@ -66,6 +67,7 @@ public class MeetingActivity extends AppCompatActivity {
         meetingName = findViewById(R.id.meetingNameTab);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
         addOrRemoveCreatorAsFriend = findViewById(R.id.addFriend);
+        deleteButton = findViewById(R.id.delete);
 
         attendeeSign.setText("Attendees");
         creatorSign.setText("Creator");
@@ -88,6 +90,13 @@ public class MeetingActivity extends AppCompatActivity {
             }
         });
 
+        // Delete button
+        if(meetingInfo.creatorId.equals(user.ID)){
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        else{
+            deleteButton.setVisibility(View.GONE);
+        }
 
         // Get attendee list
         ArrayList<String> attendeeIds = new ArrayList<String>();
@@ -256,9 +265,14 @@ public class MeetingActivity extends AppCompatActivity {
 
     public void back(View view){
         Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
-        //intent.putExtra("message", message); maybe user id
         intent.putExtra("user", user);
 
         startActivity(intent);
+    }
+
+    public void delete(View view){
+        DatabaseReference myRef = database.getReference();
+        myRef.child("meetings").child(meetingInfo.name).removeValue();
+        back(view);
     }
 }
