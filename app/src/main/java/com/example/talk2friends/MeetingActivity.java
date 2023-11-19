@@ -93,9 +93,11 @@ public class MeetingActivity extends AppCompatActivity {
         // Delete button
         if(meetingInfo.creatorId.equals(user.ID)){
             deleteButton.setVisibility(View.VISIBLE);
+            addOrRemoveCreatorAsFriend.setVisibility(View.GONE);
         }
         else{
             deleteButton.setVisibility(View.GONE);
+            addOrRemoveCreatorAsFriend.setVisibility(View.VISIBLE);
         }
 
         // Get attendee list
@@ -111,14 +113,16 @@ public class MeetingActivity extends AppCompatActivity {
                 attendeeIds.clear();
                 userListAdapter.clear();
                 meetingInfo.attendeeIds = snapshot.child("attendeeIds").getValue(String.class);
+                if(meetingInfo.attendeeIds == null){
+                    meetingInfo.attendeeIds = "";
+                }
                 attendeeIds.addAll(Arrays.asList(meetingInfo.attendeeIds.split(",")));
                 if (meetingInfo.attendeeIds.isEmpty()) {
                     attendeeIds.clear();
                 }
                 for (int i = 0; i < attendeeIds.size(); ++i) {
-                    if (attendeeIds.get(i) == user.ID) {
+                    if (attendeeIds.get(i).equals(user.ID)) {
                         isAttendee = true;
-                        continue;
                     }
                     myRef.child("users").child(attendeeIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -144,7 +148,13 @@ public class MeetingActivity extends AppCompatActivity {
                         }
                     });
                 }
-
+                // set up join or leave meeting button
+                if (isAttendee){
+                    joinOrLeaveButton.setText("Leave");
+                }
+                else{
+                    joinOrLeaveButton.setText("Join");
+                }
 
             }
 
@@ -199,28 +209,22 @@ public class MeetingActivity extends AppCompatActivity {
         addOrRemoveCreatorAsFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!FriendFunction.areFriends(userId, meetingInfo.creatorId)) {
-                    addOrRemoveCreatorAsFriend.setText("Add Friend");
+                if (addOrRemoveCreatorAsFriend.getText().equals("Add Friend")) {
+                    addOrRemoveCreatorAsFriend.setText("Remove Friend");
                     FriendFunction.addFriends(userId, meetingInfo.creatorId);
                 } else {
-                    addOrRemoveCreatorAsFriend.setText("Remove Friend");
+                    addOrRemoveCreatorAsFriend.setText("Add Friend");
                     FriendFunction.removeFriends(userId, meetingInfo.creatorId);
                 }
             }
         });
 
 
-        // set up join or leave meeting button
-        if (isAttendee){
-            joinOrLeaveButton.setText("Leave");
-        }
-        else{
-            joinOrLeaveButton.setText("Join");
-        }
+
         joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isAttendee){
+                if(isAttendee){
                     joinOrLeaveButton.setText("Join");
                     attendeeIds.remove(userId);
                     String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
@@ -234,7 +238,7 @@ public class MeetingActivity extends AppCompatActivity {
                     meetingInfo.attendeeIds = commaseparatedlist;
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
-                    isAttendee = true;
+                    isAttendee = false;
                     myRef.updateChildren(childUpdates);
                 }
                 else {
@@ -252,7 +256,7 @@ public class MeetingActivity extends AppCompatActivity {
 
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
-                    isAttendee = false;
+                    isAttendee = true;
                     myRef.updateChildren(childUpdates);
                 }
             }
@@ -273,6 +277,9 @@ public class MeetingActivity extends AppCompatActivity {
     public void delete(View view){
         DatabaseReference myRef = database.getReference();
         myRef.child("meetings").child(meetingInfo.name).removeValue();
-        back(view);
+        Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
+        intent.putExtra("user", user);
+
+        startActivity(intent);
     }
 }
