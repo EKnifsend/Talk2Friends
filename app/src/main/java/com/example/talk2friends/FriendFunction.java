@@ -17,12 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FriendFunction {
-    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static ArrayList<String> friendsList;
     public static void setFriends(ArrayList<String> f){
         friendsList = f;
     }
     public static void addFriends(String userA, String userB){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
         String friend1;
         String friend2;
@@ -58,6 +58,7 @@ public class FriendFunction {
     }
 
     public static void removeFriends(String userA, String userB){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
         String friend1;
         String friend2;
@@ -92,7 +93,6 @@ public class FriendFunction {
     }
 
     public static boolean areFriends(String userA, String userB){
-        DatabaseReference myRef = database.getReference();
         return friendsList.contains(userB);
        /* final boolean[] flag = {false};
         myRef.child("friends").child(String.valueOf(userA)).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -114,8 +114,8 @@ public class FriendFunction {
          return flag[0]; */
     }
 
-    public static int countFriends(String userId) {
+    public static int countFriends() {
         //count friends
-        return 0;
+        return friendsList.size();
     }
 }

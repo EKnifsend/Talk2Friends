@@ -40,7 +40,6 @@ public class MeetingActivity extends AppCompatActivity {
     private TextView creatorSign;
     private TextView creatorName;
     private Button deleteButton;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private MeetingInfo meetingInfo;
     private ArrayList<User> attendees = new ArrayList<User>();
     private boolean isAttendee = false;
@@ -72,6 +71,7 @@ public class MeetingActivity extends AppCompatActivity {
         attendeeSign.setText("Attendees");
         creatorSign.setText("Creator");
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
         meetingName.setText(meetingInfo.name);
@@ -113,10 +113,8 @@ public class MeetingActivity extends AppCompatActivity {
                 attendeeIds.clear();
                 userListAdapter.clear();
                 meetingInfo.attendeeIds = snapshot.child("attendeeIds").getValue(String.class);
-                if(meetingInfo.attendeeIds == null){
-                    meetingInfo.attendeeIds = "";
-                }
-                attendeeIds.addAll(Arrays.asList(meetingInfo.attendeeIds.split(",")));
+                attendeeIds.addAll(parseList(meetingInfo.attendeeIds));
+
                 if (meetingInfo.attendeeIds.isEmpty()) {
                     attendeeIds.clear();
                 }
@@ -262,9 +260,6 @@ public class MeetingActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
     public void back(View view){
@@ -275,11 +270,21 @@ public class MeetingActivity extends AppCompatActivity {
     }
 
     public void delete(View view){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
         myRef.child("meetings").child(meetingInfo.name).removeValue();
         Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
         intent.putExtra("user", user);
 
         startActivity(intent);
+    }
+
+    public static ArrayList<String> parseList(String attendees){
+        ArrayList<String> members = new ArrayList<String>();
+        if(attendees == null || attendees.equals("")){
+            return members;
+        }
+        members.addAll(Arrays.asList(attendees.split(",")));
+        return members;
     }
 }
