@@ -83,6 +83,12 @@ public class SignUpFragment extends Fragment {
             return; // Exit the method
         }
 
+        // Check if the email ends with "@usc.edu"
+        if (!email.endsWith("@usc.edu")) {
+            Toast.makeText(getContext(), "Please sign up with a USC email address", Toast.LENGTH_SHORT).show();
+            return; // Exit the method
+        }
+
         String userType = userTypeSpinner.getSelectedItem().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
