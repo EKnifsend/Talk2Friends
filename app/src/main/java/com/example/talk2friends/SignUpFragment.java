@@ -17,11 +17,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpFragment extends Fragment {
 
-    private EditText usernameEditText, emailEditText, passwordEditText, ageEditText; // Add the ageEditText
+    EditText usernameEditText;
+    EditText emailEditText;
+    EditText passwordEditText;
+    EditText ageEditText; // Add the ageEditText
     private Button signUpButton, loginButton;
-    private Spinner userTypeSpinner;
+    Spinner userTypeSpinner;
 
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
 
     public SignUpFragment() {
@@ -71,7 +74,7 @@ public class SignUpFragment extends Fragment {
         return view;
     }
 
-    private void signUpUser(View view) {
+    void signUpUser(View view) {
         String username = usernameEditText.getText().toString().trim();
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -111,5 +114,9 @@ public class SignUpFragment extends Fragment {
                         Toast.makeText(getContext(), "Sign up failed. Please try again.", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public boolean areFieldsEmpty(String username, String email, String password, String age) {
+        return username.isEmpty() || email.isEmpty() || password.isEmpty() || age.isEmpty();
     }
 }
