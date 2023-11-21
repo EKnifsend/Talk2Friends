@@ -1,18 +1,14 @@
 package com.example.talk2friends;
 
 import org.junit.Test;
-import org.mockito.Mockito;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.example.talk2friends.LoginFragment;
 
 public class TestEmptyFieldsLogin {
 
     @Test
     public void testAreFieldsEmpty() {
-        LoginFragment loginFragment = Mockito.mock(LoginFragment.class);
+        LoginFragment loginFragment = new LoginFragment();
 
         // Simulate empty fields
         boolean result = loginFragment.areFieldsEmpty("", "");
