@@ -48,6 +48,12 @@ public class CreateMeetingActivity extends Activity {
         meetingTimeEditText = findViewById(R.id.meetingTime);
         createButton = findViewById(R.id.createMeeting);
 
+        meetingDateEditText.setHint("Date");
+        meetingLocationEditText.setHint("Location");
+        meetingDescriptionEditText.setHint("Description");
+        meetingNameEditText.setHint("Name");
+        meetingTimeEditText.setHint("Time");
+        
         createButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0)
             {
@@ -57,49 +63,32 @@ public class CreateMeetingActivity extends Activity {
                 String name = meetingNameEditText.getText().toString();
                 String time = meetingTimeEditText.getText().toString();
 
-                boolean flag = true;
+                boolean flag = CheckInput(date, location, description, name, time);
                 if(date.equalsIgnoreCase(""))
                 {
-                    meetingDateEditText.setHint("please enter a date");
                     meetingDateEditText.setError("please enter a date");
-                    flag = false;
                 }
                 if(location.equalsIgnoreCase(""))
                 {
-                    meetingLocationEditText.setHint("please enter a location");
                     meetingLocationEditText.setError("please enter a location");
-                    flag = false;
                 }
                 if(description.equalsIgnoreCase(""))
                 {
-                    meetingDescriptionEditText.setHint("please enter a description");
                     meetingDescriptionEditText.setError("please enter a description");
-                    flag = false;
                 }
                 if(name.equalsIgnoreCase(""))
                 {
-                    meetingNameEditText.setHint("please enter a name");
                     meetingNameEditText.setError("please enter a name");
-                    flag = false;
                 }
                 if(time.equalsIgnoreCase(""))
                 {
-                    meetingTimeEditText.setHint("please enter a time");
                     meetingTimeEditText.setError("please enter a time");
-                    flag = false;
                 }
 
 
                 if(flag)
                 {
-                    MeetingInfo mi = new MeetingInfo();
-                    mi.creatorId = userId;
-                    mi.meetingId = 1; // TODO create a way to generate ids
-                    mi.name = name;
-                    mi.time = date + time;
-                    mi.description = description;
-                    mi.location = location;
-                    mi.attendeeIds = new String();
+                    MeetingInfo mi = new MeetingInfo(name, 1, description, location, time, userId, new String());
 
                     DatabaseReference myRef = database.getReference();
                     myRef.child("meetings").child(mi.name).setValue(mi);
@@ -122,5 +111,24 @@ public class CreateMeetingActivity extends Activity {
         Intent intent = new Intent(CreateMeetingActivity.this, MainActivity.class);
         intent.putExtra("user", user);
         startActivity(intent);
+    }
+
+    public static boolean CheckInput(String date, String location, String description, String name, String time){
+        if(date == null || date.equals("")){
+            return false;
+        }
+        if(location == null || location.equals("")){
+            return false;
+        }
+        if(description == null || description.equals("")){
+            return false;
+        }
+        if(name == null || name.equals("")){
+            return false;
+        }
+        if(time == null || time.equals("")){
+            return false;
+        }
+        return true;
     }
 }

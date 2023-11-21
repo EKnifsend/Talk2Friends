@@ -3,6 +3,8 @@ package com.example.talk2friends;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import java.lang.reflect.Array;
 import java.util.*;
 import android.util.Log;
 import android.view.View;
@@ -225,15 +227,8 @@ public class MeetingActivity extends AppCompatActivity {
                 if(isAttendee){
                     joinOrLeaveButton.setText("Join");
                     attendeeIds.remove(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-                    StringBuilder str = new StringBuilder();
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
 
-                    meetingInfo.attendeeIds = commaseparatedlist;
+                    meetingInfo.attendeeIds = listToString(attendeeIds);
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
                     isAttendee = false;
@@ -242,15 +237,7 @@ public class MeetingActivity extends AppCompatActivity {
                 else {
                     joinOrLeaveButton.setText("Leave");
                     attendeeIds.add(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
-
-                    meetingInfo.attendeeIds = commaseparatedlist;
+                    meetingInfo.attendeeIds = listToString(attendeeIds);
 
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
@@ -286,5 +273,19 @@ public class MeetingActivity extends AppCompatActivity {
         }
         members.addAll(Arrays.asList(attendees.split(",")));
         return members;
+    }
+    public static String listToString(ArrayList<String> list){
+        if(list == null){
+            return "";
+        }
+        if(list.isEmpty()){
+            return "";
+        }
+        String commaseparatedlist = list.toString();
+        commaseparatedlist
+                = commaseparatedlist.replace("[", "")
+                .replace("]", "")
+                .replace(" ", "");
+        return commaseparatedlist;
     }
 }
