@@ -23,14 +23,25 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginFragment extends Fragment {
 
-    private EditText emailEditText, passwordEditText;
+    EditText emailEditText;
+    EditText passwordEditText;
     private Button loginButton;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private boolean isLoginSuccessful = false;
+
+    FirebaseAuth mAuth;
+    DatabaseReference mDatabase;
 
     public LoginFragment() {
         // Required empty public constructor
+    }
+
+    public boolean areFieldsEmpty(String email, String password) {
+        return email.isEmpty() || password.isEmpty();
+    }
+
+    public boolean isLoginSuccessful() {
+        return isLoginSuccessful;
     }
 
     @Override
@@ -55,7 +66,7 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
-    private void loginUser(View view) {
+    public void loginUser(View view) {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
