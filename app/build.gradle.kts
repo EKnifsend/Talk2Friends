@@ -7,6 +7,10 @@ android {
     namespace = "com.example.talk2friends"
     compileSdk = 34
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     defaultConfig {
         applicationId = "com.example.talk2friends"
         minSdk = 24
@@ -37,10 +41,22 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-auth:22.2.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.10")
+    testImplementation("org.mockito:mockito-core:3.12.4")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
     implementation("androidx.navigation:navigation-fragment:2.7.5")
+    testImplementation("org.robolectric:robolectric:4.5.1")
+    testImplementation("androidx.test:core:1.4.0")
     implementation("androidx.navigation:navigation-ui:2.7.5")
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:rules:1.4.0")
+    testImplementation("org.robolectric:robolectric:4.5.1")
+    androidTestImplementation("com.android.support.test:rules:1.0.2")
+    androidTestImplementation("com.android.support.test:runner:1.0.2")
+    androidTestImplementation("androidx.test:core:1.4.0") // Replace with the latest version
+    androidTestImplementation("androidx.test.ext:junit:1.1.3") // Replace with the latest version
 }

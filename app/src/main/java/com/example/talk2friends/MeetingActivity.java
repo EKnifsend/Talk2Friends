@@ -3,6 +3,8 @@ package com.example.talk2friends;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import java.lang.reflect.Array;
 import java.util.*;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +41,7 @@ public class MeetingActivity extends AppCompatActivity {
     private TextView meetingDescription;
     private TextView creatorSign;
     private TextView creatorName;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private Button deleteButton;
     private MeetingInfo meetingInfo;
     private ArrayList<User> attendees = new ArrayList<User>();
     private boolean isAttendee = false;
@@ -66,10 +68,12 @@ public class MeetingActivity extends AppCompatActivity {
         meetingName = findViewById(R.id.meetingNameTab);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
         addOrRemoveCreatorAsFriend = findViewById(R.id.addFriend);
+        deleteButton = findViewById(R.id.delete);
 
         attendeeSign.setText("Attendees");
         creatorSign.setText("Creator");
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference();
 
         meetingName.setText(meetingInfo.name);
@@ -88,6 +92,15 @@ public class MeetingActivity extends AppCompatActivity {
             }
         });
 
+        // Delete button
+        if(meetingInfo.creatorId.equals(user.ID)){
+            deleteButton.setVisibility(View.VISIBLE);
+            addOrRemoveCreatorAsFriend.setVisibility(View.GONE);
+        }
+        else{
+            deleteButton.setVisibility(View.GONE);
+            addOrRemoveCreatorAsFriend.setVisibility(View.VISIBLE);
+        }
 
         // Get attendee list
         ArrayList<String> attendeeIds = new ArrayList<String>();
@@ -102,14 +115,14 @@ public class MeetingActivity extends AppCompatActivity {
                 attendeeIds.clear();
                 userListAdapter.clear();
                 meetingInfo.attendeeIds = snapshot.child("attendeeIds").getValue(String.class);
-                attendeeIds.addAll(Arrays.asList(meetingInfo.attendeeIds.split(",")));
+                attendeeIds.addAll(parseList(meetingInfo.attendeeIds));
+
                 if (meetingInfo.attendeeIds.isEmpty()) {
                     attendeeIds.clear();
                 }
                 for (int i = 0; i < attendeeIds.size(); ++i) {
-                    if (attendeeIds.get(i) == user.ID) {
+                    if (attendeeIds.get(i).equals(user.ID)) {
                         isAttendee = true;
-                        continue;
                     }
                     myRef.child("users").child(attendeeIds.get(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -135,7 +148,13 @@ public class MeetingActivity extends AppCompatActivity {
                         }
                     });
                 }
-
+                // set up join or leave meeting button
+                if (isAttendee){
+                    joinOrLeaveButton.setText("Leave");
+                }
+                else{
+                    joinOrLeaveButton.setText("Join");
+                }
 
             }
 
@@ -190,75 +209,83 @@ public class MeetingActivity extends AppCompatActivity {
         addOrRemoveCreatorAsFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!FriendFunction.areFriends(userId, meetingInfo.creatorId)) {
-                    addOrRemoveCreatorAsFriend.setText("Add Friend");
+                if (addOrRemoveCreatorAsFriend.getText().equals("Add Friend")) {
+                    addOrRemoveCreatorAsFriend.setText("Remove Friend");
                     FriendFunction.addFriends(userId, meetingInfo.creatorId);
                 } else {
-                    addOrRemoveCreatorAsFriend.setText("Remove Friend");
+                    addOrRemoveCreatorAsFriend.setText("Add Friend");
                     FriendFunction.removeFriends(userId, meetingInfo.creatorId);
                 }
             }
         });
 
 
-        // set up join or leave meeting button
-        if (isAttendee){
-            joinOrLeaveButton.setText("Leave");
-        }
-        else{
-            joinOrLeaveButton.setText("Join");
-        }
+
         joinOrLeaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isAttendee){
+                if(isAttendee){
                     joinOrLeaveButton.setText("Join");
                     attendeeIds.remove(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-                    StringBuilder str = new StringBuilder();
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
 
-                    meetingInfo.attendeeIds = commaseparatedlist;
-                    Map<String, Object> childUpdates = new HashMap<>();
-                    childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
-                    isAttendee = true;
-                    myRef.updateChildren(childUpdates);
-                }
-                else {
-                    joinOrLeaveButton.setText("Leave");
-                    attendeeIds.add(userId);
-                    String key = myRef.child("meetings").child(String.valueOf(meetingId)).push().getKey();
-
-                    String commaseparatedlist = attendeeIds.toString();
-                    commaseparatedlist
-                            = commaseparatedlist.replace("[", "")
-                            .replace("]", "")
-                            .replace(" ", "");
-
-                    meetingInfo.attendeeIds = commaseparatedlist;
-
+                    meetingInfo.attendeeIds = listToString(attendeeIds);
                     Map<String, Object> childUpdates = new HashMap<>();
                     childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
                     isAttendee = false;
                     myRef.updateChildren(childUpdates);
                 }
+                else {
+                    joinOrLeaveButton.setText("Leave");
+                    attendeeIds.add(userId);
+                    meetingInfo.attendeeIds = listToString(attendeeIds);
+
+                    Map<String, Object> childUpdates = new HashMap<>();
+                    childUpdates.put("/meetings/" + meetingInfo.name, meetingInfo);
+                    isAttendee = true;
+                    myRef.updateChildren(childUpdates);
+                }
             }
         });
-
-
-
 
     }
 
     public void back(View view){
         Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
-        //intent.putExtra("message", message); maybe user id
         intent.putExtra("user", user);
 
         startActivity(intent);
+    }
+
+    public void delete(View view){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.child("meetings").child(meetingInfo.name).removeValue();
+        Intent intent = new Intent(MeetingActivity.this, MainActivity.class);
+        intent.putExtra("user", user);
+
+        startActivity(intent);
+    }
+
+    public static ArrayList<String> parseList(String attendees){
+        ArrayList<String> members = new ArrayList<String>();
+        if(attendees == null || attendees.equals("")){
+            return members;
+        }
+        members.addAll(Arrays.asList(attendees.split(",")));
+        return members;
+    }
+    public static String listToString(ArrayList<String> list){
+        if(list == null){
+            return "";
+        }
+        if(list.isEmpty()){
+            return "";
+        }
+        String commaseparatedlist = list.toString();
+        commaseparatedlist
+                = commaseparatedlist.replace("[", "")
+                .replace("]", "")
+                .replace(" ", "");
+        return commaseparatedlist;
     }
 }

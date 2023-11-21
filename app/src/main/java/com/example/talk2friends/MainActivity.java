@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Use Intent to set user correctly
      */
-    private User buildUser(Intent intent) {
+    public User buildUser(Intent intent) {
         if (intent.hasExtra("user")) { // User exists in app
             return ((User) intent.getParcelableExtra("user"));
         }
