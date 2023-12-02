@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -105,6 +106,16 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Button logoutButton = findViewById(R.id.logOut);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform logout actions here
+                // For example, navigate back to the login screen or perform logout logic
+                logout();
+            }
+        });
     }
 
     public void cancel(View view){
@@ -161,5 +172,16 @@ public class EditProfileActivity extends AppCompatActivity {
                 });
 
          */
+    }
+    // Method to perform logout actions
+    private void logout() {
+        // You can add code here to perform logout actions, such as clearing user session,
+        // redirecting to the login screen, etc.
+        // For example:
+        // Clear user session data, finish current activity, and navigate back to the login screen
+        Intent intent = new Intent(EditProfileActivity.this, AuthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
