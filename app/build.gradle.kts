@@ -59,4 +59,6 @@ dependencies {
     androidTestImplementation("com.android.support.test:runner:1.0.2")
     androidTestImplementation("androidx.test:core:1.4.0") // Replace with the latest version
     androidTestImplementation("androidx.test.ext:junit:1.1.3") // Replace with the latest version
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }

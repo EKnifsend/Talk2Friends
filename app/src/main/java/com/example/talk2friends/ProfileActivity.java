@@ -80,31 +80,30 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Set up list of interests
 
-        for (Interests interest : Interests.values()) {
-            String interestId = subject.getID() + interest.toString();
-            mDatabase.child("interests").child(interestId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        // "interest1" does exists in the database
+        mDatabase.child("interests").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                subjectInterests.clear();
+                interestAdapter.clear();
+
+                for (Interests interest : Interests.values()) {
+                    String interestId = subject.getID() + interest.toString();
+
+                    if (dataSnapshot.child(interestId).exists()) {
                         subjectInterests.add(interest);
-                        interestAdapter.clear();
-                        interestAdapter.addAll(subjectInterests);
-                        interestAdapter.notifyDataSetChanged();
-                    } else {
-                        // "interest1" doesn't not exist in the database
-                        //System.out.println("Entry " + interestId + "doesn't exist in the database.");
                     }
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Handle database error
-                    System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
-                }
-            });
-        }
+                //interestAdapter.addAll(subjectInterests);
+                interestAdapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle database error
+                System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
+            }
+        });
 
     }
 
