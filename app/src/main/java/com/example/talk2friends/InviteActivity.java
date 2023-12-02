@@ -46,6 +46,19 @@ public class InviteActivity extends AppCompatActivity  {
     }
 
     public void submitChanges(View view) {
+        String email = friendEmailEditText.getText().toString();
+        if(email.length() < 8){
+            friendEmailEditText.setError("Please enter a valid usc.edu email.");
+            return;
+        }
+        else{
+            email = email.substring(email.length() - 8);
+            if(!email.equals("@usc.edu")){
+                friendEmailEditText.setError("Please enter a valid usc.edu email.");
+                return;
+            }
+        }
+
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{String.valueOf(friendEmailEditText.getText())});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Invitation to Talk2Friends");
