@@ -59,7 +59,14 @@ public class SuggestFriendsActivity extends AppCompatActivity {
         recsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User selectedUser = userAdapter.getItem(i);
 
+                Intent intent = new Intent(SuggestFriendsActivity.this, ProfileActivity.class);
+                //intent.putExtra("message", message); maybe user id
+                intent.putExtra("user", user);
+                intent.putExtra("subject", selectedUser);
+
+                startActivity(intent);
             }
             public void AddOrRemoveFriend(View view) {
                 LinearLayout parentRow = (LinearLayout) view.getParent();
