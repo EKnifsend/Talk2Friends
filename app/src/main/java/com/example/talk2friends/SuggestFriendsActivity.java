@@ -149,15 +149,13 @@ public class SuggestFriendsActivity extends AppCompatActivity {
 
                 List<Map.Entry<String, Integer>> sortRecomendations = sortHashMapByValue(potentialFriends);
 
-                userAdapter.clear();
-                int i = 0;
+                //System.out.println("map" + potentialFriends.size());
+                //System.out.println("list" + sortRecomendations.size());
 
-                System.out.println("map" + potentialFriends.size());
-                System.out.println("list" + sortRecomendations.size());
+                //userAdapter.clear();
+                //System.out.println(userAdapter.isEmpty());
 
-                userAdapter.clear();
-                System.out.println(userAdapter.isEmpty());
-
+                /*
                 while (i < NUMBER_OF_RECS && i < sortRecomendations.size()) {
                     userAdapter.clear();
                     System.out.println(userAdapter.isEmpty());
@@ -191,6 +189,44 @@ public class SuggestFriendsActivity extends AppCompatActivity {
 
                     i++;
                 }
+                 */
+
+                mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            userAdapter.clear();
+                            int i = 0;
+
+                            while (i < NUMBER_OF_RECS && i < sortRecomendations.size()) {
+                                //System.out.println(userAdapter.isEmpty());
+                                String userId = sortRecomendations.get(i).getKey();
+
+                                // get information from userId snapshot
+                                int age = Integer.parseInt(dataSnapshot.child(userId).child("age").getValue(String.class));
+                                String email = dataSnapshot.child(userId).child("email").getValue(String.class);
+                                String affiliation = dataSnapshot.child(userId).child("userType").getValue(String.class);
+                                String username = dataSnapshot.child(userId).child("username").getValue(String.class);
+
+                                User rec = makeUser(userId, age, email, affiliation, username);
+
+                                userAdapter.add(rec);
+
+                                i++;
+                            }
+                            userAdapter.notifyDataSetChanged();
+                        } else {
+                            // "interest1" does not exist in the database
+                            System.out.println("Entry 'interest1' does exist in the database.");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle database error
+                        System.err.println("Error checking 'interest1' entry: " + databaseError.getMessage());
+                    }
+                });
             }
 
             @Override
